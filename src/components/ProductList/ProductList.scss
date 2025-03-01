@@ -30,4 +30,108 @@
 .product-list-content-cnt {
     width: 100%;
     min-height: calc(100vh - 48px);
+    display: flex;
+    justify-content: center;
+}
+.add-products-main-cnt {
+    width: 50%;
+    display: flex;
+    flex-direction: column;
+    padding-top: 67px;
+
+    > span {
+        padding-left: 16px;
+        font-family: SF Pro Text;
+        font-weight: 500;
+        font-size: 18px;
+        line-height: 20px;
+        letter-spacing: 0px;
+    }
+
+    > button {
+        width: 193px;
+        height: 48px;
+        margin-top: 21px;
+        color: #008060;
+        border: 2px solid #008060;
+        border-radius: 4px;
+        font-family: SF Pro Text;
+        font-weight: 600;
+        align-self: flex-end;
+        &:hover {
+            cursor: pointer;
+        }   
+    }
+}
+.product-list-row {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    padding-top: 33px;
+
+    div:nth-child(1) {
+        width: 8%;
+    }
+    div:nth-child(2) {
+        width: 50%;
+    }
+    div:nth-child(3) {
+        width: 35%;
+    }
+}
+.products-list-head-row {
+   @extend .product-list-row;
+
+    span {
+        padding-left: 17px;
+        font-family: SF Pro Text;
+        font-weight: 500;
+        font-size: 14px;
+        line-height: 16px;
+        letter-spacing: 0px;
+    }
+}
+.products-list-data-row {
+    @extend .product-list-row;
+
+    button {
+        width: 141px;
+        height: 34px;
+        border: 2px solid #008060;
+        border-radius: 4px;
+        background: #008060;
+        color: white;
+        font-family: SF Pro Text;
+        font-weight: 600;
+        font-size: 14px;
+        line-height: 20px;
+        letter-spacing: 0px;
+        &:hover {
+            cursor: pointer;
+        }
+    }
+}
+.list-product-title-cnt {
+    display: flex;
+    height: 32px;
+    justify-content: space-between;
+    align-items: center;
+    background: #FFFFFF;
+    border: 1px solid #00000012;
+    box-shadow: 0px 2px 4px 0px #0000001A;
+
+    >span {
+        font-family: SF Pro Text;
+        font-weight: 400;
+        font-size: 14px;
+        line-height: 21px;
+        letter-spacing: 0px;
+        padding-left: 10px;
+    }
+    img {
+        margin-right: 10px;
+        &:hover {
+            cursor: pointer;
+        }
+    }
 }
