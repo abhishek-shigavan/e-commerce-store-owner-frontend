@@ -1,7 +1,10 @@
+import { useState } from "react"
 import "./ProductList.scss"
 import logo from "../../assets/monklogo.svg"
 import penIcon from "../../assets/pen_icon.svg"
-import { useState } from "react"
+import MenuItem from '@mui/material/MenuItem';
+import FormControl from '@mui/material/FormControl';
+import Select from '@mui/material/Select';
 
 function ProductList () {
     const [listOfProducts, setListOfProducts] = useState([{pid: `prod${Math.random().toPrecision(4)*10000}`, product: "", discountSet: false, discount: {} }])
@@ -45,7 +48,23 @@ function ProductList () {
                             </div>
                             <div>
                             {!item.discountSet ? <button onClick={() => handleDiscount("toggle", item)}>Add Discount</button>
-                                : <></>
+                                : <>
+                                    <input/>
+                                    <FormControl
+                                        sx={{width: "40%", height: "32px", backgroundColor: "white"}}
+                                    >
+                                        <Select
+                                            labelId="demo-simple-select-autowidth-label"
+                                            id="demo-simple-select-autowidth"
+                                            sx={{height: "32px"}}
+                                            className="xyz"
+                                            fullWidth
+                                        >
+                                          <MenuItem value="% Off">% off</MenuItem>
+                                          <MenuItem value={"Flat"}>flat</MenuItem>
+                                        </Select>
+                                    </FormControl>
+                                  </>
                             }</div>
                         </div>
                     )}
