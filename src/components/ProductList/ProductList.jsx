@@ -4,10 +4,21 @@ import penIcon from "../../assets/pen_icon.svg"
 import { useState } from "react"
 
 function ProductList () {
-    const [listOfProducts, setListOfProducts] = useState([{product: "", discount: null}])
+    const [listOfProducts, setListOfProducts] = useState([{pid: `prod${Math.random().toPrecision(4)*10000}`, product: "", discountSet: false, discount: {} }])
+
+    const handleDiscount = (action, value) => {
+        if(action == "toggle") {
+            setListOfProducts(listOfProducts.map(item => {
+                if(item.pid == value.pid) {
+                    return {...item, discountSet: true}
+                }
+                return item
+            }))
+        }
+    }
 
     const handleAddProduct = () => {
-        setListOfProducts([...listOfProducts, {product: "", discount: null}])
+        setListOfProducts([...listOfProducts, {pid: `prod${Math.random().toPrecision(4)*10000}`, product: "", discountSet: false, discount: {}}])
     }
 
     return (
@@ -32,7 +43,10 @@ function ProductList () {
                                 <span>{item.product.length > 0 ? item.product : "Select Product"}</span>
                                 <img src={penIcon} alt="Pencil Icon" />
                             </div>
-                            <div><button>Add Discount</button></div>
+                            <div>
+                            {!item.discountSet ? <button onClick={() => handleDiscount("toggle", item)}>Add Discount</button>
+                                : <></>
+                            }</div>
                         </div>
                     )}
                     <button onClick={handleAddProduct}>Add Product</button>
