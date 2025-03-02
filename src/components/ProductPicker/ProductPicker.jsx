@@ -8,6 +8,8 @@ import ProductList from "../ProductList/ProductList"
 function ProductPicker () {
     const [pageNo, setPageNo] = useState(1)
     const [searchProdList, setSearchProdList] = useState([])
+    // const [selectedProdList, setSelectedProdList] = useState([])
+    let selectedProdList = []
 
     const delayedAPICall = (cb, delay = 1000) => {
         let timeout
@@ -31,6 +33,36 @@ function ProductPicker () {
         })
     }, 1000)
 
+    const handleSelectProduct = (product) => {
+        const isProductPresent = selectedProdList.filter((item) => item.id == product.id)
+
+        isProductPresent.length ? selectedProdList = selectedProdList.filter((item) => item.id != product.id)
+            : selectedProdList.push({pid: `prod${Math.random().toPrecision(4)*10000}`, id: product.id, product: product.title, discountSet: false, discount: {}, variants: []})
+    }
+
+    const handleSelectVariant = (product, variant) => {
+        const isProductPresent = selectedProdList.filter((item) => item.id == product.id)
+
+        if(!isProductPresent.length) {
+            selectedProdList.push({pid: `prod${Math.random().toPrecision(4)*10000}`, product: product.title, discountSet: false, discount: {}, variants: [variant]})
+        } else {
+            const isVariantPresent = isProductPresent[0].variants.filter((item) => item.id == variant.id)
+
+            isVariantPresent.length ? isProductPresent[0].variants = isProductPresent[0].variants.filter((item) => item.id != variant.id)
+                : isProductPresent[0].variants = [...isProductPresent[0].variants, variant]
+
+            selectedProdList = searchProdList.map((item) => {
+                if(item.id == isProductPresent[0].id)
+                    return isProductPresent[0]
+                return item
+            })    
+        }
+    }
+
+    const handleAddProduct = () => {
+        console.log(selectedProdList);
+    }
+
     return (
         <div className="product-picker-main-cnt">
             <div className="product-picker-title-cnt">
@@ -50,21 +82,29 @@ function ProductPicker () {
                 {searchProdList.map((prod) =>
                     <>
                         <div>
+                            <img src={prod?.image?.src} style={{width: "36px", height: "36px"}}alt="" />
                             <label>
-                                <input type="checkbox" />
+                                <input type="checkbox" onChange={() => handleSelectProduct(prod)}/>
                                 {prod?.title}
                             </label>
                         </div>
                         {prod?.variants.map((prodVariant) =>
                             <div>
                                 <label>
-                                    <input type="checkbox" />
+                                    <input type="checkbox" onChange={() => handleSelectVariant(prod, prodVariant)}/>
                                     {prodVariant?.title}
                                 </label>
+                                <span>{prodVariant?.inventory_quantity} available</span>
+                                <span>${prodVariant?.price}</span>
+
                             </div>
                         )}
                     </>
                 )}
+                <div>
+                    <button>Cancel</button>
+                    <button onClick={handleAddProduct}>Add</button>
+                </div>
             </div>
         </div>
     )
