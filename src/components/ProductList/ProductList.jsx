@@ -9,7 +9,7 @@ import Modal from '@mui/material/Modal';
 import ProductPicker from "../ProductPicker/ProductPicker";
 
 function ProductList () {
-    const [listOfProducts, setListOfProducts] = useState([{pid: `prod${Math.random().toPrecision(4)*10000}`, product: "", discountSet: false, discount: {} }])
+    const [listOfProducts, setListOfProducts] = useState([{pid: `prod${Math.random().toPrecision(4)*10000}`, product: "", discountSet: false, discount: {}, variants: [] }])
     const [openProdPicker, setOpenProdPicker] = useState(false)
 
     const handleDiscount = (action, value) => {
@@ -24,7 +24,16 @@ function ProductList () {
     }
 
     const handleAddProduct = () => {
-        setListOfProducts([...listOfProducts, {pid: `prod${Math.random().toPrecision(4)*10000}`, product: "", discountSet: false, discount: {}}])
+        setListOfProducts([...listOfProducts, {pid: `prod${Math.random().toPrecision(4)*10000}`, product: "", discountSet: false, discount: {}, variants: []}])
+    }
+
+    const updateListOfProduct = (selectedProduct) => {
+        setListOfProducts(listOfProducts.flatMap(item => {
+            if(item.pid == openProdPicker) 
+                return selectedProduct
+            return item
+        }))
+        setOpenProdPicker("")
     }
 
     return (
@@ -47,39 +56,40 @@ function ProductList () {
                             <div></div>
                             <div className="list-product-title-cnt">
                                 <span>{item.product.length > 0 ? item.product : "Select Product"}</span>
-                                <img src={penIcon} alt="Pencil Icon" onClick={() => setOpenProdPicker(true)}/>
+                                <img src={penIcon} alt="Pencil Icon" onClick={() => setOpenProdPicker(item.pid)}/>
                             </div>
                             <div>
-                            {!item.discountSet ? <button onClick={() => handleDiscount("toggle", item)}>Add Discount</button>
-                                : <>
-                                    <input/>
-                                    <FormControl
-                                        sx={{width: "40%", height: "32px", backgroundColor: "white"}}
-                                    >
-                                        <Select
-                                            labelId="demo-simple-select-autowidth-label"
-                                            id="demo-simple-select-autowidth"
-                                            sx={{height: "32px"}}
-                                            className="xyz"
-                                            fullWidth
+                                {!item.discountSet ? <button onClick={() => handleDiscount("toggle", item)}>Add Discount</button>
+                                    : <>
+                                        <input/>
+                                        <FormControl
+                                            sx={{width: "40%", height: "32px", backgroundColor: "white"}}
                                         >
-                                          <MenuItem value="% Off">% off</MenuItem>
-                                          <MenuItem value={"Flat"}>flat</MenuItem>
-                                        </Select>
-                                    </FormControl>
-                                  </>
-                            }</div>
+                                            <Select
+                                                labelId="demo-simple-select-autowidth-label"
+                                                id="demo-simple-select-autowidth"
+                                                sx={{height: "32px"}}
+                                                className="xyz"
+                                                fullWidth
+                                            >
+                                              <MenuItem value="% Off">% off</MenuItem>
+                                              <MenuItem value={"Flat"}>flat</MenuItem>
+                                            </Select>
+                                        </FormControl>
+                                      </>
+                                }
+                            </div>
                         </div>
                     )}
                     <button onClick={handleAddProduct}>Add Product</button>
                 </div>
                 <Modal
-                    open={openProdPicker}
-                    onClose={() => setOpenProdPicker(false)}
+                    open={openProdPicker.length}
+                    onClose={() => setOpenProdPicker("")}
                     aria-labelledby="modal-modal-title"
                     aria-describedby="modal-modal-description"
                 >
-                    <ProductPicker/>
+                    <ProductPicker updateProductList={updateListOfProduct}/>
                 </Modal>
             </section>
         </main>
