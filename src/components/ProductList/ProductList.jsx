@@ -5,9 +5,12 @@ import penIcon from "../../assets/pen_icon.svg"
 import MenuItem from '@mui/material/MenuItem';
 import FormControl from '@mui/material/FormControl';
 import Select from '@mui/material/Select';
+import Modal from '@mui/material/Modal';
+import ProductPicker from "../ProductPicker/ProductPicker";
 
 function ProductList () {
     const [listOfProducts, setListOfProducts] = useState([{pid: `prod${Math.random().toPrecision(4)*10000}`, product: "", discountSet: false, discount: {} }])
+    const [openProdPicker, setOpenProdPicker] = useState(false)
 
     const handleDiscount = (action, value) => {
         if(action == "toggle") {
@@ -44,7 +47,7 @@ function ProductList () {
                             <div></div>
                             <div className="list-product-title-cnt">
                                 <span>{item.product.length > 0 ? item.product : "Select Product"}</span>
-                                <img src={penIcon} alt="Pencil Icon" />
+                                <img src={penIcon} alt="Pencil Icon" onClick={() => setOpenProdPicker(true)}/>
                             </div>
                             <div>
                             {!item.discountSet ? <button onClick={() => handleDiscount("toggle", item)}>Add Discount</button>
@@ -70,6 +73,14 @@ function ProductList () {
                     )}
                     <button onClick={handleAddProduct}>Add Product</button>
                 </div>
+                <Modal
+                    open={openProdPicker}
+                    onClose={() => setOpenProdPicker(false)}
+                    aria-labelledby="modal-modal-title"
+                    aria-describedby="modal-modal-description"
+                >
+                    <ProductPicker/>
+                </Modal>
             </section>
         </main>
     )
