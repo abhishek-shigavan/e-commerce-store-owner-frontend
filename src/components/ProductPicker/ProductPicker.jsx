@@ -3,9 +3,8 @@ import closeIcon from "../../assets/close_icon.svg"
 import searchIcon from "../../assets/search_icon.svg"
 import { searchProductsApiCall } from "../../utils/Api"
 import { useState } from "react"
-import ProductList from "../ProductList/ProductList"
 
-function ProductPicker () {
+function ProductPicker ({updateProductList, ...props}) {
     const [pageNo, setPageNo] = useState(1)
     const [searchProdList, setSearchProdList] = useState([])
     // const [selectedProdList, setSelectedProdList] = useState([])
@@ -44,14 +43,14 @@ function ProductPicker () {
         const isProductPresent = selectedProdList.filter((item) => item.id == product.id)
 
         if(!isProductPresent.length) {
-            selectedProdList.push({pid: `prod${Math.random().toPrecision(4)*10000}`, product: product.title, discountSet: false, discount: {}, variants: [variant]})
+            selectedProdList.push({pid: `prod${Math.random().toPrecision(4)*10000}`, id: product.id, product: product.title, discountSet: false, discount: {}, variants: [variant]})
         } else {
             const isVariantPresent = isProductPresent[0].variants.filter((item) => item.id == variant.id)
 
             isVariantPresent.length ? isProductPresent[0].variants = isProductPresent[0].variants.filter((item) => item.id != variant.id)
                 : isProductPresent[0].variants = [...isProductPresent[0].variants, variant]
 
-            selectedProdList = searchProdList.map((item) => {
+            selectedProdList = selectedProdList.map((item) => {
                 if(item.id == isProductPresent[0].id)
                     return isProductPresent[0]
                 return item
@@ -60,7 +59,7 @@ function ProductPicker () {
     }
 
     const handleAddProduct = () => {
-        console.log(selectedProdList);
+        updateProductList(selectedProdList)
     }
 
     return (
