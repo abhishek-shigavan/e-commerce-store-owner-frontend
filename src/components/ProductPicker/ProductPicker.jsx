@@ -6,6 +6,7 @@ import { useEffect, useState } from "react"
 
 function ProductPicker ({updateProductList, ...props}) {
     const [pageNo, setPageNo] = useState(1)
+    const [searchQuery, setSearchQuery] = useState("")
     const [searchProdList, setSearchProdList] = useState([])
     const [selectedProdList, setSelectedProdList] = useState([])
    
@@ -24,6 +25,8 @@ function ProductPicker ({updateProductList, ...props}) {
             setSearchProdList([])
             return
         }
+        setSearchQuery(query)
+        if(pageNo > 1) setPageNo(1)
         searchProductsApiCall(query, 1).then((res) => {
             res.data ? setSearchProdList(res?.data) : console.log("no results");
         }).catch((err) => {
@@ -57,7 +60,7 @@ function ProductPicker ({updateProductList, ...props}) {
         }
     }
 
-    const markUnmarkVariants = (product, variantId) => {
+    const handleMarkUnmarkVariants = (product, variantId) => {
         let flag = false
         const isProductSelected = selectedProdList.filter((item) => item.id == product.id)
 
@@ -68,6 +71,21 @@ function ProductPicker ({updateProductList, ...props}) {
     const handleAddProduct = () => {
         updateProductList(selectedProdList)
     }
+
+    const handlefetchProductsOnScroll = delayedAPICall(() => {
+        if(pageNo) {
+            searchProductsApiCall(searchQuery, pageNo + 1).then((res) => {
+                if (res.data == null) {
+                    setPageNo(0)
+                    return
+                }
+                setSearchProdList([...searchProdList, ...res.data])
+                setPageNo(pageNo + 1)
+            }).catch((err) => {
+                console.log(err);
+            })
+        }    
+    }, 700)
 
     return (
         <div className="product-picker-main-cnt">
@@ -83,38 +101,48 @@ function ProductPicker ({updateProductList, ...props}) {
                     onChange={(e) => handleSearchProduct(e.currentTarget.value)}    
                 />
             </div>
-            <div className="product-search-divider-cnt"></div>
-            <div className="product-search-list-cnt">
-                {searchProdList.map((prod) =>
-                    <>
-                        <div>
-                            <img src={prod?.image?.src} style={{width: "36px", height: "36px"}}alt="" />
-                            <label>
-                                <input type="checkbox" onChange={() => handleSelectProduct(prod)} checked={selectedProdList.filter((item) => item.id == prod.id).length}/>
-                                {prod?.title}
-                            </label>
-                        </div>
-                        {prod?.variants.map((prodVariant) =>
+            <div className="product-picker-search-divider-cnt"></div>
+            <div className="product-search-list-action-cnt">
+                <div 
+                    className="product-search-list-cnt"
+                    onScroll={handlefetchProductsOnScroll}
+                >
+                    {searchProdList.map((prod) =>
+                        <>
                             <div>
+                                <img src={prod?.image?.src} style={{width: "36px", height: "36px"}}alt="" />
                                 <label>
-                                    <input
-                                        type="checkbox"
-                                        onChange={() => handleSelectVariant(prod, prodVariant)}
-                                        checked={markUnmarkVariants(prod, prodVariant.id)}
-                                    />
-                                    {prodVariant?.title}
+                                    <input type="checkbox" onChange={() => handleSelectProduct(prod)} checked={selectedProdList.filter((item) => item.id == prod.id).length}/>
+                                    {prod?.title}
                                 </label>
-                                <span>{prodVariant?.inventory_quantity} available</span>
-                                <span>${prodVariant?.price}</span>
-
                             </div>
-                        )}
-                    </>
-                )}
-                <div>
-                    <button>Cancel</button>
-                    <button onClick={handleAddProduct}>Add</button>
+                            {prod?.variants.map((prodVariant) =>
+                                <div>
+                                    <label>
+                                        <input
+                                            type="checkbox"
+                                            onChange={() => handleSelectVariant(prod, prodVariant)}
+                                            checked={handleMarkUnmarkVariants(prod, prodVariant.id)}
+                                        />
+                                        {prodVariant?.title}
+                                    </label>
+                                    <span>{prodVariant?.inventory_quantity} available</span>
+                                    <span>${prodVariant?.price}</span>
+
+                                </div>
+                            )}
+                        </>
+                    )}
                 </div>
+                {searchProdList.length > 0 && 
+                    <div className="product-picker-action-cnt">
+                        <span>{selectedProdList.length} product selected</span>
+                        <div>
+                            <button className="product-picker-cancel-btn" onClick={updateProductList}>Cancel</button>
+                            <button className="product-picker-add-btn" onClick={handleAddProduct}>Add</button>
+                        </div>
+                    </div>
+                }
             </div>
         </div>
     )
