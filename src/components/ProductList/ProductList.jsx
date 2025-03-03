@@ -17,25 +17,37 @@ function ProductList () {
         pid: `prod${Math.random().toPrecision(4)*10000}`,
         product: "",
         discountSet: false,
-        discount: {},
+        discount: { value: "", type: "% Off"},
         variants: [],
         hideVariants: true
     }])
     const [openProdPicker, setOpenProdPicker] = useState(false)
 
-    const handleDiscount = (action, value) => {
+    const handleDiscount = (action, product, actionVal = "") => {
         if(action == "toggle") {
             setListOfProducts(listOfProducts.map(item => {
-                if(item.pid == value.pid) {
+                if(item.pid == product.pid) {
                     return {...item, discountSet: true}
                 }
                 return item
             }))
+            return
+        }
+        if(action == "discount") {
+            setListOfProducts(listOfProducts.map(item => {
+                if(item.pid == product.pid) {
+                    return {...item, discount: {...product.discount, value: actionVal}}
+                }
+                return item
+            }))   
+        } else {
+            console.log(actionVal);
+            
         }
     }
 
     const handleAddProduct = () => {
-        setListOfProducts([...listOfProducts, {pid: `prod${Math.random().toPrecision(4)*10000}`, product: "", discountSet: false, discount: {}, variants: [], hideVariants: true}])
+        setListOfProducts([...listOfProducts, {pid: `prod${Math.random().toPrecision(4)*10000}`, product: "", discountSet: false, discount: {value: "", type: "% Off"}, variants: [], hideVariants: true}])
     }
 
     const updateListOfProduct = (selectedProduct = []) => {
@@ -85,7 +97,7 @@ function ProductList () {
                                 {!item.discountSet ? <button onClick={() => handleDiscount("toggle", item)}>Add Discount</button>
                                     : <div>
                                         <>
-                                            <input/>
+                                            <input onChange={(e) => handleDiscount("discount", item, e.currentTarget.value)}/>
                                             <FormControl
                                                 sx={{width: "40%", height: "32px", backgroundColor: "white"}}
                                             >
@@ -95,8 +107,9 @@ function ProductList () {
                                                     sx={{height: "32px"}}
                                                     className="xyz"
                                                     fullWidth
-                                                    >
-                                                  <MenuItem value="% Off">% off</MenuItem>
+                                                    onChange={(e) => handleDiscount("discountType", item, e.currentTarget.value)}
+                                                >
+                                                  <MenuItem value={"% Off"}>% off</MenuItem>
                                                   <MenuItem value={"Flat"}>flat</MenuItem>
                                                 </Select>
                                             </FormControl>
@@ -123,8 +136,8 @@ function ProductList () {
                                                 <div>
                                                     <span>{variantItem.title}</span>
                                                 </div>
-                                                <div>
-                                                    <input type="text" />
+                                                {item.discountSet && <div>
+                                                    <input type="text" value={item.discount.value}/>
                                                     <FormControl
                                                         sx={{width: "44%", height: "32px", backgroundColor: "white", borderRadius: "30px"}}
                                                     >
@@ -139,7 +152,7 @@ function ProductList () {
                                                           <MenuItem value={"Flat"}>flat</MenuItem>
                                                         </Select>
                                                     </FormControl>
-                                                </div>
+                                                </div>}
                                                 <img src={closeIcon} alt="Close icon" />
                                             </div>
                                         )}
