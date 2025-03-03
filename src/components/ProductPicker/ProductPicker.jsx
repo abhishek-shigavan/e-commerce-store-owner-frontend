@@ -36,14 +36,14 @@ function ProductPicker ({updateProductList, ...props}) {
         const isProductPresent = selectedProdList.filter((item) => item.id == product.id)
 
         isProductPresent.length ? selectedProdList = selectedProdList.filter((item) => item.id != product.id)
-            : selectedProdList.push({pid: `prod${Math.random().toPrecision(4)*10000}`, id: product.id, product: product.title, discountSet: false, discount: {}, variants: []})
+            : selectedProdList.push({pid: `prod${Math.random().toPrecision(4)*10000}`, id: product.id, product: product.title, discountSet: false, discount: {}, variants: [], hideVariants: true})
     }
 
     const handleSelectVariant = (product, variant) => {
         const isProductPresent = selectedProdList.filter((item) => item.id == product.id)
 
         if(!isProductPresent.length) {
-            selectedProdList.push({pid: `prod${Math.random().toPrecision(4)*10000}`, id: product.id, product: product.title, discountSet: false, discount: {}, variants: [variant]})
+            selectedProdList.push({pid: `prod${Math.random().toPrecision(4)*10000}`, id: product.id, product: product.title, discountSet: false, discount: {}, variants: [variant], hideVariants: true})
         } else {
             const isVariantPresent = isProductPresent[0].variants.filter((item) => item.id == variant.id)
 
@@ -66,7 +66,7 @@ function ProductPicker ({updateProductList, ...props}) {
         <div className="product-picker-main-cnt">
             <div className="product-picker-title-cnt">
                 <span>Select Products</span>
-                <img src={closeIcon} alt="Close icon" />
+                <img src={closeIcon} alt="Close icon" onClick={updateProductList}/>
             </div>
             <div className="product-picker-search-cnt">
                 <img src={searchIcon} alt="Search icon" />
