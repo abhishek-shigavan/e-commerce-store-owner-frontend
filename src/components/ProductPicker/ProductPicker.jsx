@@ -2,14 +2,13 @@ import "./ProductPicker.scss"
 import closeIcon from "../../assets/close_icon.svg"
 import searchIcon from "../../assets/search_icon.svg"
 import { searchProductsApiCall } from "../../utils/Api"
-import { useState } from "react"
+import { useEffect, useState } from "react"
 
 function ProductPicker ({updateProductList, ...props}) {
     const [pageNo, setPageNo] = useState(1)
     const [searchProdList, setSearchProdList] = useState([])
-    // const [selectedProdList, setSelectedProdList] = useState([])
-    let selectedProdList = []
-
+    const [selectedProdList, setSelectedProdList] = useState([])
+   
     const delayedAPICall = (cb, delay = 1000) => {
         let timeout
         return (...args) => {
@@ -35,27 +34,35 @@ function ProductPicker ({updateProductList, ...props}) {
     const handleSelectProduct = (product) => {
         const isProductPresent = selectedProdList.filter((item) => item.id == product.id)
 
-        isProductPresent.length ? selectedProdList = selectedProdList.filter((item) => item.id != product.id)
-            : selectedProdList.push({pid: `prod${Math.random().toPrecision(4)*10000}`, id: product.id, product: product.title, discountSet: false, discount: {}, variants: [], hideVariants: true})
+        isProductPresent.length ? setSelectedProdList(selectedProdList.filter((item) => item.id != product.id))
+            : setSelectedProdList([...selectedProdList, {pid: `prod${Math.random().toPrecision(4)*10000}`, id: product.id, product: product.title, discountSet: false, discount: {}, variants: [], hideVariants: true}])
     }
 
     const handleSelectVariant = (product, variant) => {
         const isProductPresent = selectedProdList.filter((item) => item.id == product.id)
 
         if(!isProductPresent.length) {
-            selectedProdList.push({pid: `prod${Math.random().toPrecision(4)*10000}`, id: product.id, product: product.title, discountSet: false, discount: {}, variants: [variant], hideVariants: true})
+            setSelectedProdList([...selectedProdList, {pid: `prod${Math.random().toPrecision(4)*10000}`, id: product.id, product: product.title, discountSet: false, discount: {}, variants: [variant], hideVariants: true}])
         } else {
             const isVariantPresent = isProductPresent[0].variants.filter((item) => item.id == variant.id)
 
             isVariantPresent.length ? isProductPresent[0].variants = isProductPresent[0].variants.filter((item) => item.id != variant.id)
                 : isProductPresent[0].variants = [...isProductPresent[0].variants, variant]
 
-            selectedProdList = selectedProdList.map((item) => {
+            setSelectedProdList(selectedProdList.map((item) => {
                 if(item.id == isProductPresent[0].id)
                     return isProductPresent[0]
                 return item
-            })    
+            }))    
         }
+    }
+
+    const markUnmarkVariants = (product, variantId) => {
+        let flag = false
+        const isProductSelected = selectedProdList.filter((item) => item.id == product.id)
+
+        !isProductSelected.length ? flag = false : isProductSelected[0].variants.filter((item) => item.id == variantId).length > 0 ? flag = true : flag = false
+        return flag
     }
 
     const handleAddProduct = () => {
@@ -83,14 +90,18 @@ function ProductPicker ({updateProductList, ...props}) {
                         <div>
                             <img src={prod?.image?.src} style={{width: "36px", height: "36px"}}alt="" />
                             <label>
-                                <input type="checkbox" onChange={() => handleSelectProduct(prod)}/>
+                                <input type="checkbox" onChange={() => handleSelectProduct(prod)} checked={selectedProdList.filter((item) => item.id == prod.id).length}/>
                                 {prod?.title}
                             </label>
                         </div>
                         {prod?.variants.map((prodVariant) =>
                             <div>
                                 <label>
-                                    <input type="checkbox" onChange={() => handleSelectVariant(prod, prodVariant)}/>
+                                    <input
+                                        type="checkbox"
+                                        onChange={() => handleSelectVariant(prod, prodVariant)}
+                                        checked={markUnmarkVariants(prod, prodVariant.id)}
+                                    />
                                     {prodVariant?.title}
                                 </label>
                                 <span>{prodVariant?.inventory_quantity} available</span>
