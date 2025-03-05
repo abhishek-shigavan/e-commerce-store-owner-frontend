@@ -58,7 +58,7 @@
     border-bottom: 1px solid #0000001A;
 }
 .product-search-list-action-cnt {
-    width: calc(100% - 56px);
+    width: 100%;
     display: flex;
     flex-direction: column;
     justify-content: space-between;
@@ -73,11 +73,13 @@
     scrollbar-width: none;  
 }
 .product-picker-action-cnt {
-    width: 100%;
+    width: calc(100% - 56px);
     height: 48px;
     display: flex;
     justify-content: space-between;
     align-items: center;
+    padding: 0px 28px;
+    border-top: 1px solid #0000001A;
 
     span {
         font-family: SF Pro Text;
@@ -118,4 +120,86 @@
     display: flex;
     justify-content: center;
     padding-top: 20px;
+}
+.product-picker-custom-checkbox {
+    input {
+        appearance: none;
+        -webkit-appearance: none;
+        width: 24px;
+        height: 24px;
+        border-radius: 4px;
+        border: 1px solid black;
+        position: relative;
+
+        &:checked {
+            border-radius: 4px;
+            border: 1px solid #008060;
+            background-color: #008060 !important;
+        }
+        &:checked::before {
+            content: '✔';
+            font-size: 18px;
+            color: white;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
+        &:hover {
+            cursor: pointer;
+        }
+    }
+}
+.product-picker-custom-span {
+    font-family: SF Pro Text;
+    font-weight: 400;
+    font-size: 16px;
+    line-height: 24px;
+    letter-spacing: 0px;
+}
+.product-picker-product-cnt {
+    width: calc(100% - 56px);
+    min-height: 60px;
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    padding: 0px 28px;
+    border-bottom: 1px solid #0000001A;
+
+    @extend.product-picker-custom-checkbox;
+
+    img {
+        width: 36px;
+        height: 36px;
+        border-radius: 4px;
+    }
+    span {
+        @extend.product-picker-custom-span
+    }
+}
+.product-picker-product-variant-cnt {
+    width: calc(100% - 95px);
+    min-height: 60px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0px 28px 0px 67px;
+    border-bottom: 1px solid #0000001A;
+    
+    @extend.product-picker-custom-checkbox;
+    span {
+        @extend.product-picker-custom-span
+    }
+    >div:nth-child(1) {
+        min-height: 60px;
+        display: flex;
+        align-items: center;
+        gap: 23px;
+    }
+    >div:nth-child(2) {
+        min-height: 60px;
+        display: flex;
+        align-items: center;
+        gap: 36px;
+    }
 }
