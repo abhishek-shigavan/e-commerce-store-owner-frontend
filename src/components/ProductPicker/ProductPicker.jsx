@@ -127,31 +127,31 @@ function ProductPicker ({updateProductList, ...props}) {
                         : !searchProdList.length ? <div className="product-picker-loading-cnt"><span>No products found</span></div>
                         : searchProdList.map((prod) =>
                             <>
-                                <div>
-                                    <img src={prod?.image?.src} style={{width: "36px", height: "36px"}}alt="" />
-                                    <label>
-                                        <input 
-                                            type="checkbox"
-                                            onChange={() => handleSelectProduct(prod)}
-                                            checked={selectedProdList.filter((item) => item.id == prod.id).length}
-                                            onPointerDown={(e) => e.stopPropagation()}    
-                                        />
-                                        {prod?.title}
-                                    </label>
+                                <div className="product-picker-product-cnt">
+                                    <input 
+                                        type="checkbox"
+                                        onChange={() => handleSelectProduct(prod)}
+                                        checked={selectedProdList.filter((item) => item.id == prod.id).length}
+                                        onPointerDown={(e) => e.stopPropagation()}    
+                                    />
+                                    <img src={prod?.image?.src} alt="" />
+                                    <span>{prod?.title}</span>
                                 </div>
                                 {prod?.variants.map((prodVariant) =>
-                                    <div>
-                                        <label>
+                                    <div className="product-picker-product-variant-cnt">
+                                        <div>
                                             <input
                                                 type="checkbox"
                                                 onChange={() => handleSelectVariant(prod, prodVariant)}
                                                 checked={handleMarkUnmarkVariants(prod, prodVariant.id)}
                                                 onPointerDown={(e) => e.stopPropagation()}
                                             />
-                                            {prodVariant?.title}
-                                        </label>
-                                        <span>{prodVariant?.inventory_quantity} available</span>
-                                        <span>${prodVariant?.price}</span>
+                                            <span>{prodVariant?.title}</span>
+                                        </div>
+                                        <div>
+                                            <span>{prodVariant?.inventory_quantity || 0} available</span>
+                                            <span>${prodVariant?.price}</span>
+                                        </div>
                                     </div>
                                 )}
                             </>
