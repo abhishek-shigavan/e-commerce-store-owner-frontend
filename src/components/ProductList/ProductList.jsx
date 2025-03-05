@@ -11,6 +11,9 @@ import FormControl from '@mui/material/FormControl';
 import Select from '@mui/material/Select';
 import Modal from '@mui/material/Modal';
 import ProductPicker from "../ProductPicker/ProductPicker";
+import ProductDetailsRow from "./ProductDetailsRow"
+import { closestCorners, DndContext } from "@dnd-kit/core"
+import { arrayMove, SortableContext, verticalListSortingStrategy } from "@dnd-kit/sortable"
 
 function ProductList () {
     const [listOfProducts, setListOfProducts] = useState([{
@@ -41,8 +44,7 @@ function ProductList () {
                 return item
             }))   
         } else {
-            console.log(actionVal);
-            
+            console.log(actionVal); 
         }
     }
 
@@ -70,6 +72,20 @@ function ProductList () {
         }))   
     }
 
+    const getTaskPos = (id) => listOfProducts.findIndex((product) => product.pid === id);
+
+    const handleDragEnd = (event) => {
+        const { active, over } = event;
+
+        if (active.id === over.id) return;
+
+        setListOfProducts((products) => {
+            const originalPos = getTaskPos(active.id);
+            const newPos = getTaskPos(over.id);
+            return arrayMove(products, originalPos, newPos);
+        })  
+    }
+
     return (
         <main className="product-list-main-cnt">
             <header className="product-list-header-cnt">
@@ -79,99 +95,110 @@ function ProductList () {
             <section className="product-list-content-cnt">
                 <div className="add-products-main-cnt">
 
-                    <span>Add Products</span>
+                    {/* <span>Add Products</span>
                     <div className="products-list-head-row">
                         <div></div>
                         <div><span>Product</span></div>
                         <div><span>Discount</span></div>
-                    </div>
-                    {listOfProducts.map((item) =>
-                        <div style={{width: "100%", display: "flex", flexDirection: "column"}}>
-                        <div className="products-list-data-row">
-                            <div><img src={bulletIcon} alt="Bullet icon" /></div>
-                            <div className="list-product-title-cnt">
-                                <span>{item.product.length > 0 ? item.product : "Select Product"}</span>
-                                <img src={penIcon} alt="Pencil Icon" onClick={() => setOpenProdPicker(item.pid)}/>
-                            </div>
-                            <div>
-                                {!item.discountSet ? <button onClick={() => handleDiscount("toggle", item)}>Add Discount</button>
-                                    : <div>
-                                        <>
-                                            <input onChange={(e) => handleDiscount("discount", item, e.currentTarget.value)}/>
-                                            <FormControl
-                                                sx={{width: "40%", height: "32px", backgroundColor: "white"}}
-                                            >
-                                                <Select
-                                                    labelId="demo-simple-select-autowidth-label"
-                                                    id="demo-simple-select-autowidth"
-                                                    sx={{height: "32px"}}
-                                                    className="xyz"
-                                                    fullWidth
-                                                    onChange={(e) => handleDiscount("discountType", item, e.currentTarget.value)}
-                                                >
-                                                  <MenuItem value={"% Off"}>% off</MenuItem>
-                                                  <MenuItem value={"Flat"}>flat</MenuItem>
-                                                </Select>
-                                            </FormControl>
-                                        </>
+                    </div> */}
+                    <div style={{width: "100%", display: "flex", flexDirection:"column", gap: "15px"}}>
+                    <DndContext
+                        collisionDetection={closestCorners}
+                        onDragEnd={handleDragEnd}
+                    >
+                        <SortableContext items={listOfProducts.map((item) => item.pid)} strategy={verticalListSortingStrategy}>
+      
+                    {listOfProducts.map((item, index) =>
+                    //     <div style={{width: "100%", display: "flex", flexDirection: "column"}}>
+                    //     <div className="products-list-data-row">
+                    //         <div><img src={bulletIcon} alt="Bullet icon" /></div>
+                    //         <div className="list-product-title-cnt">
+                    //             <span>{item.product.length > 0 ? item.product : "Select Product"}</span>
+                    //             <img src={penIcon} alt="Pencil Icon" onClick={() => setOpenProdPicker(item.pid)}/>
+                    //         </div>
+                    //         <div>
+                    //             {!item.discountSet ? <button onClick={() => handleDiscount("toggle", item)}>Add Discount</button>
+                    //                 : <div>
+                    //                     <>
+                    //                         <input onChange={(e) => handleDiscount("discount", item, e.currentTarget.value)}/>
+                    //                         <FormControl
+                    //                             sx={{width: "40%", height: "32px", backgroundColor: "white"}}
+                    //                         >
+                    //                             <Select
+                    //                                 labelId="demo-simple-select-autowidth-label"
+                    //                                 id="demo-simple-select-autowidth"
+                    //                                 sx={{height: "32px"}}
+                    //                                 className="xyz"
+                    //                                 fullWidth
+                    //                                 onChange={(e) => handleDiscount("discountType", item, e.currentTarget.value)}
+                    //                             >
+                    //                               <MenuItem value={"% Off"}>% off</MenuItem>
+                    //                               <MenuItem value={"Flat"}>flat</MenuItem>
+                    //                             </Select>
+                    //                         </FormControl>
+                    //                     </>
                                         
-                                      </div>
-                                }
-                            </div>
-                        </div>
-                        {item.variants.length > 0 && 
-                             <div className="product-list-variant-cnt">
-                                {item.hideVariants ? <div className="product-list-variant-btn-img-cnt">
-                                        <span onClick={() => handleShowHideVariants(item)}>Show Variants</span>
-                                        <img src={downArrowIcon} alt="" srcset="" />
-                                    </div>
-                                    : <>
-                                        <div className="product-list-variant-btn-img-cnt">
-                                            <span onClick={() => handleShowHideVariants(item)}>Hide Variants</span>
-                                            <img src={upArrowIcon} alt="" />
-                                        </div>
-                                        {item.variants.map((variantItem) => 
-                                            <div className="product-list-variant-details-cnt">
-                                                <div><img src={bulletIcon} alt="Bullet icon" /></div>
-                                                <div>
-                                                    <span>{variantItem.title}</span>
-                                                </div>
-                                                {item.discountSet && <div>
-                                                    <input type="text" value={item.discount.value}/>
-                                                    <FormControl
-                                                        sx={{width: "44%", height: "32px", backgroundColor: "white", borderRadius: "30px"}}
-                                                    >
-                                                        <Select
-                                                            labelId="demo-simple-select-autowidth-label"
-                                                            id="demo-simple-select-autowidth"
-                                                            sx={{height: "32px", borderRadius: "30px"}}
-                                                            className="xyz"
-                                                            fullWidth
-                                                            >
-                                                          <MenuItem value="% Off">% off</MenuItem>
-                                                          <MenuItem value={"Flat"}>flat</MenuItem>
-                                                        </Select>
-                                                    </FormControl>
-                                                </div>}
-                                                <img src={closeIcon} alt="Close icon" />
-                                            </div>
-                                        )}
-                                    </>
-                                }        
-                            </div>
-                        }
-                        </div>
+                    //                   </div>
+                    //             }
+                    //         </div>
+                    //     </div>
+                    //     {item.variants.length > 0 && 
+                    //          <div className="product-list-variant-cnt">
+                    //             {item.hideVariants ? <div className="product-list-variant-btn-img-cnt">
+                    //                     <span onClick={() => handleShowHideVariants(item)}>Show Variants</span>
+                    //                     <img src={downArrowIcon} alt="" srcset="" />
+                    //                 </div>
+                    //                 : <>
+                    //                     <div className="product-list-variant-btn-img-cnt">
+                    //                         <span onClick={() => handleShowHideVariants(item)}>Hide Variants</span>
+                    //                         <img src={upArrowIcon} alt="" />
+                    //                     </div>
+                    //                     {item.variants.map((variantItem) => 
+                    //                         <div className="product-list-variant-details-cnt">
+                    //                             <div><img src={bulletIcon} alt="Bullet icon" /></div>
+                    //                             <div>
+                    //                                 <span>{variantItem.title}</span>
+                    //                             </div>
+                    //                             {item.discountSet && <div>
+                    //                                 <input type="text" value={item.discount.value}/>
+                    //                                 <FormControl
+                    //                                     sx={{width: "44%", height: "32px", backgroundColor: "white", borderRadius: "30px"}}
+                    //                                 >
+                    //                                     <Select
+                    //                                         labelId="demo-simple-select-autowidth-label"
+                    //                                         id="demo-simple-select-autowidth"
+                    //                                         sx={{height: "32px", borderRadius: "30px"}}
+                    //                                         className="xyz"
+                    //                                         fullWidth
+                    //                                         >
+                    //                                       <MenuItem value="% Off">% off</MenuItem>
+                    //                                       <MenuItem value={"Flat"}>flat</MenuItem>
+                    //                                     </Select>
+                    //                                 </FormControl>
+                    //                             </div>}
+                    //                             <img src={closeIcon} alt="Close icon" />
+                    //                         </div>
+                    //                     )}
+                    //                 </>
+                    //             }        
+                    //         </div>
+                    //     }
+                    //     </div>
+                        <ProductDetailsRow key={item.pid} id={item.pid} index={index+1} productDetails={item} listOfProducts={listOfProducts} updateListOfProducts={setListOfProducts}/>
                     )}
+                        </SortableContext>
+                    </DndContext>
+                    </div>
                     <button onClick={handleAddProduct}>Add Product</button>
                 </div>
-                <Modal
+                {/* <Modal
                     open={openProdPicker.length}
                     onClose={() => setOpenProdPicker("")}
                     aria-labelledby="modal-modal-title"
                     aria-describedby="modal-modal-description"
                 >
                     <ProductPicker updateProductList={updateListOfProduct}/>
-                </Modal>
+                </Modal> */}
             </section>
         </main>
     )
