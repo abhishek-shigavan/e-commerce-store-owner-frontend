@@ -3,12 +3,18 @@ import closeIcon from "../../assets/close_icon.svg"
 import searchIcon from "../../assets/search_icon.svg"
 import { searchProductsApiCall } from "../../utils/Api"
 import { useEffect, useState } from "react"
+import { CircularProgress } from "@mui/material"
 
 function ProductPicker ({updateProductList, ...props}) {
     const [pageNo, setPageNo] = useState(1)
     const [searchQuery, setSearchQuery] = useState("")
     const [searchProdList, setSearchProdList] = useState([])
     const [selectedProdList, setSelectedProdList] = useState([])
+    const [loading, setLoading] = useState(true)
+
+    useEffect(() => {
+        fetchProducts("")
+    }, [])
    
     const delayedAPICall = (cb, delay = 1000) => {
         let timeout
@@ -20,25 +26,34 @@ function ProductPicker ({updateProductList, ...props}) {
         }
     }
 
+    const fetchProducts = (query) => {
+        searchProductsApiCall(query, 1).then((res) => {
+            res.data ? setSearchProdList(res?.data) : setSearchProdList([]);
+            setLoading(false)
+        }).catch((err) => {
+            setSearchProdList([])
+            setLoading(false)
+            console.log(err);
+        })
+    }
+
     const handleSearchProduct = delayedAPICall((query) => {
+        setLoading(true)
         if(!query.length) {
             setSearchProdList([])
+            setLoading(false)
             return
         }
         setSearchQuery(query)
         if(pageNo > 1) setPageNo(1)
-        searchProductsApiCall(query, 1).then((res) => {
-            res.data ? setSearchProdList(res?.data) : console.log("no results");
-        }).catch((err) => {
-            console.log(err);
-        })
+        fetchProducts(query)
     }, 1000)
-
+   
     const handleSelectProduct = (product) => {
         const isProductPresent = selectedProdList.filter((item) => item.id == product.id)
 
         isProductPresent.length ? setSelectedProdList(selectedProdList.filter((item) => item.id != product.id))
-            : setSelectedProdList([...selectedProdList, {pid: `prod${Math.random().toPrecision(4)*10000}`, id: product.id, product: product.title, discountSet: false, discount: {}, variants: [], hideVariants: true}])
+            : setSelectedProdList([...selectedProdList, {pid: `prod${Math.random().toPrecision(4)*10000}`, id: product.id, product: product.title, discountSet: false, discount: {}, variants: product.variants, hideVariants: true}])
     }
 
     const handleSelectVariant = (product, variant) => {
@@ -91,14 +106,15 @@ function ProductPicker ({updateProductList, ...props}) {
         <div className="product-picker-main-cnt">
             <div className="product-picker-title-cnt">
                 <span>Select Products</span>
-                <img src={closeIcon} alt="Close icon" onClick={updateProductList}/>
+                <img src={closeIcon} alt="Close icon" onClick={updateProductList} onPointerDown={(e) => e.stopPropagation()}/>
             </div>
             <div className="product-picker-search-cnt">
                 <img src={searchIcon} alt="Search icon" />
                 <input
                     type="text"
                     placeholder="Search product"
-                    onChange={(e) => handleSearchProduct(e.currentTarget.value)}    
+                    onChange={(e) => handleSearchProduct(e.currentTarget.value)}
+                    onPointerDown={(e) => e.stopPropagation()} 
                 />
             </div>
             <div className="product-picker-search-divider-cnt"></div>
@@ -107,39 +123,58 @@ function ProductPicker ({updateProductList, ...props}) {
                     className="product-search-list-cnt"
                     onScroll={handlefetchProductsOnScroll}
                 >
-                    {searchProdList.map((prod) =>
-                        <>
-                            <div>
-                                <img src={prod?.image?.src} style={{width: "36px", height: "36px"}}alt="" />
-                                <label>
-                                    <input type="checkbox" onChange={() => handleSelectProduct(prod)} checked={selectedProdList.filter((item) => item.id == prod.id).length}/>
-                                    {prod?.title}
-                                </label>
-                            </div>
-                            {prod?.variants.map((prodVariant) =>
+                    {loading ? <div className="product-picker-loading-cnt"><CircularProgress /></div>
+                        : !searchProdList.length ? <div className="product-picker-loading-cnt"><span>No products found</span></div>
+                        : searchProdList.map((prod) =>
+                            <>
                                 <div>
+                                    <img src={prod?.image?.src} style={{width: "36px", height: "36px"}}alt="" />
                                     <label>
-                                        <input
+                                        <input 
                                             type="checkbox"
-                                            onChange={() => handleSelectVariant(prod, prodVariant)}
-                                            checked={handleMarkUnmarkVariants(prod, prodVariant.id)}
+                                            onChange={() => handleSelectProduct(prod)}
+                                            checked={selectedProdList.filter((item) => item.id == prod.id).length}
+                                            onPointerDown={(e) => e.stopPropagation()}    
                                         />
-                                        {prodVariant?.title}
+                                        {prod?.title}
                                     </label>
-                                    <span>{prodVariant?.inventory_quantity} available</span>
-                                    <span>${prodVariant?.price}</span>
-
                                 </div>
-                            )}
-                        </>
-                    )}
+                                {prod?.variants.map((prodVariant) =>
+                                    <div>
+                                        <label>
+                                            <input
+                                                type="checkbox"
+                                                onChange={() => handleSelectVariant(prod, prodVariant)}
+                                                checked={handleMarkUnmarkVariants(prod, prodVariant.id)}
+                                                onPointerDown={(e) => e.stopPropagation()}
+                                            />
+                                            {prodVariant?.title}
+                                        </label>
+                                        <span>{prodVariant?.inventory_quantity} available</span>
+                                        <span>${prodVariant?.price}</span>
+                                    </div>
+                                )}
+                            </>
+                        )}
                 </div>
                 {searchProdList.length > 0 && 
                     <div className="product-picker-action-cnt">
                         <span>{selectedProdList.length} product selected</span>
                         <div>
-                            <button className="product-picker-cancel-btn" onClick={updateProductList}>Cancel</button>
-                            <button className="product-picker-add-btn" onClick={handleAddProduct}>Add</button>
+                            <button 
+                                className="product-picker-cancel-btn"
+                                onClick={updateProductList}
+                                onPointerDown={(e) => e.stopPropagation()}
+                            >
+                                Cancel
+                            </button>
+                            <button
+                                className="product-picker-add-btn"
+                                onClick={handleAddProduct}
+                                onPointerDown={(e) => e.stopPropagation()}
+                            >
+                                Add
+                            </button>
                         </div>
                     </div>
                 }
