@@ -2,7 +2,7 @@ import { useState } from "react"
 import penIcon from "../../assets/pen_icon.svg"
 import upArrowIcon from "../../assets/up_arrow.svg"
 import downArrowIcon from "../../assets/down_arrow.svg"
-import closeIcon from "../../assets/close_icon.svg"
+import closeIcon from "../../assets/close_grey_icon.svg"
 import bulletIcon from "../../assets/bullet_icon.svg"
 import MenuItem from '@mui/material/MenuItem'
 import FormControl from '@mui/material/FormControl'
@@ -75,26 +75,24 @@ function ProductDetailsRow ({id, index, productDetails, listOfProducts, updateLi
             {...listeners}
             className="product-details-row-main-cnt"
         >
-            <div className="products-list-data-row"              
-           
-            >
-                <div><img src={bulletIcon} alt="Bullet icon" />{index}</div>
+            <div className="products-list-data-row">
+                <div><img src={bulletIcon} alt="Bullet icon" />{index}.</div>
                 <div className="list-product-title-cnt">
                     <span>{productDetails.product.length > 0 ? productDetails.product : "Select Product"}</span>
                     <img src={penIcon} alt="Pencil Icon" onClick={() => setOpenProdPicker(productDetails.pid)} onPointerDown={(e) => e.stopPropagation()} />
                 </div>
                 <div>
                     {!productDetails.discountSet ? <button onClick={() => handleDiscount("toggle", productDetails)} onPointerDown={(e) => e.stopPropagation()}>Add Discount</button>
-                        : <div>
+                        : 
                             <>
                                 <input onPointerDown={(e) => e.stopPropagation()} onChange={(e) => handleDiscount("discount", productDetails, e.currentTarget.value)}/>
                                 <FormControl
-                                    sx={{width: "40%", height: "32px", backgroundColor: "white"}}
+                                    sx={{width: "48%", height: "32px", backgroundColor: "white"}}
                                 >
                                     <Select
                                         labelId="demo-simple-select-autowidth-label"
                                         id="demo-simple-select-autowidth"
-                                        sx={{height: "32px"}}
+                                        sx={{height: "34px"}}
                                         className="xyz"
                                         fullWidth
                                         onPointerDown={(e) => e.stopPropagation()}
@@ -104,9 +102,8 @@ function ProductDetailsRow ({id, index, productDetails, listOfProducts, updateLi
                                       <MenuItem value={"Flat"}>flat</MenuItem>
                                     </Select>
                                 </FormControl>
+                                <img src={closeIcon} alt="Close icon" />
                             </>
-                            
-                          </div>
                     }
                 </div>
             </div>
@@ -121,16 +118,16 @@ function ProductDetailsRow ({id, index, productDetails, listOfProducts, updateLi
                                 <span onClick={() => handleShowHideVariants(productDetails)}>Hide Variants</span>
                                 <img src={upArrowIcon} alt="" />
                             </div>
-                            {productDetails.variants.map((variantItem) => 
+                            {productDetails.variants.map((variantItem) =>
                                 <div className="product-list-variant-details-cnt">
                                     <div><img src={bulletIcon} alt="Bullet icon" /></div>
-                                    <div>
+                                    <div style={productDetails.discountSet ? {width: "calc(50% - 22px)"} : {width: "calc(91% - 22px)"}}>
                                         <span>{variantItem.title}</span>
                                     </div>
                                     {productDetails.discountSet && <div>
                                         <input type="text" value={productDetails.discount.value}/>
                                         <FormControl
-                                            sx={{width: "44%", height: "32px", backgroundColor: "white", borderRadius: "30px"}}
+                                            sx={{width: "48%", height: "32px", backgroundColor: "white", borderRadius: "30px"}}
                                         >
                                             <Select
                                                 labelId="demo-simple-select-autowidth-label"
@@ -143,10 +140,11 @@ function ProductDetailsRow ({id, index, productDetails, listOfProducts, updateLi
                                               <MenuItem value={"Flat"}>flat</MenuItem>
                                             </Select>
                                         </FormControl>
+                                        <img src={closeIcon} alt="Close icon" />
                                     </div>}
-                                    <img src={closeIcon} alt="Close icon" />
                                 </div>
                             )}
+                            <div className="product-list-variants-divider"></div>
                         </>
                     }        
                 </div>
