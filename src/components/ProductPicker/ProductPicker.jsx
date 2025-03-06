@@ -49,23 +49,27 @@ function ProductPicker ({updateProductList, ...props}) {
         fetchProducts(query)
     }, 1000)
    
+    const getVariantsWithDiscount = (variantsList) => {
+        return variantsList.map((item) => {return {...item, discount: {value: "", type: "% Off"}}})
+    }
+
     const handleSelectProduct = (product) => {
         const isProductPresent = selectedProdList.filter((item) => item.id == product.id)
 
         isProductPresent.length ? setSelectedProdList(selectedProdList.filter((item) => item.id != product.id))
-            : setSelectedProdList([...selectedProdList, {pid: `prod${Math.random().toPrecision(4)*10000}`, id: product.id, product: product.title, discount: {value: "", type: "% Off"}, variants: product.variants, hideVariants: true}])
+            : setSelectedProdList([...selectedProdList, {pid: `prod${Math.random().toPrecision(4)*10000}`, id: product.id, product: product.title, discount: {value: "", type: "% Off"}, variants: getVariantsWithDiscount(product.variants), hideVariants: true}])
     }
 
     const handleSelectVariant = (product, variant) => {
         const isProductPresent = selectedProdList.filter((item) => item.id == product.id)
 
         if(!isProductPresent.length) {
-            setSelectedProdList([...selectedProdList, {pid: `prod${Math.random().toPrecision(4)*10000}`, id: product.id, product: product.title, discount: { value: "", type: "% Off"}, variants: [variant], hideVariants: true}])
+            setSelectedProdList([...selectedProdList, {pid: `prod${Math.random().toPrecision(4)*10000}`, id: product.id, product: product.title, discount: { value: "", type: "% Off"}, variants: [{...variant, discount: {value: "", type: "% Off"}}], hideVariants: true}])
         } else {
             const isVariantPresent = isProductPresent[0].variants.filter((item) => item.id == variant.id)
 
             isVariantPresent.length ? isProductPresent[0].variants = isProductPresent[0].variants.filter((item) => item.id != variant.id)
-                : isProductPresent[0].variants = [...isProductPresent[0].variants, variant]
+                : isProductPresent[0].variants = [...isProductPresent[0].variants, {...variant, discount: {value: "", type: "% Off"}}]
 
             setSelectedProdList(selectedProdList.map((item) => {
                 if(item.id == isProductPresent[0].id)
