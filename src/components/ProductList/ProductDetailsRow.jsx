@@ -17,9 +17,7 @@ function ProductDetailsRow ({id, index, productDetails, listOfProducts, updateLi
     const [openProdPicker, setOpenProdPicker] = useState(false)
     const [discountAdded, setDiscountAdded] = useState(productDetails?.discount?.value.length ? true : false)
 
-    const { attributes, listeners, setNodeRef, transform, transition } = useSortable({ id, 
-        animateLayoutChanges: () => false 
-    });
+    const { attributes, listeners, setNodeRef, transform, transition } = useSortable({ id });
 
     const style = {
         transition,
@@ -111,25 +109,31 @@ function ProductDetailsRow ({id, index, productDetails, listOfProducts, updateLi
     }
 
     return (
-        <div 
+        <div
             ref={setNodeRef}
             style={style}
-            {...attributes}
-            {...listeners}
             className="product-details-row-main-cnt"
         >
             <div className="products-list-data-row">
-                <div><img src={bulletIcon} alt="Bullet icon" />{index}.</div>
+                <div {...attributes} {...listeners}><img src={bulletIcon} alt="Bullet icon" />{index}.</div>
                 <div className="list-product-title-cnt">
-                    <span>{productDetails.product.length > 0 ? productDetails.product : "Select Product"}</span>
-                    <img src={penIcon} alt="Pencil Icon" onClick={() => setOpenProdPicker(productDetails.pid)} onPointerDown={(e) => e.stopPropagation()} />
+                    <span {...attributes} {...listeners}>{productDetails.product.length > 0 ? productDetails.product : "Select Product"}</span>
+                    <img
+                        src={penIcon} 
+                        alt="Pencil Icon" 
+                        onClick={() => setOpenProdPicker(productDetails.pid)}
+                    />
                 </div>
                 <div>
-                    {!discountAdded ? <button onClick={() => setDiscountAdded(true)} onPointerDown={(e) => e.stopPropagation()}>Add Discount</button>
+                    {!discountAdded ?
+                        <button
+                            onClick={() => setDiscountAdded(true)}
+                        >
+                            Add Discount
+                        </button>
                         : 
                             <>
                                 <input 
-                                    onPointerDown={(e) => e.stopPropagation()}
                                     onChange={(e) => handleDiscount(e.currentTarget.value, "discount")}
                                     value={productDetails?.discount?.value}    
                                 />
@@ -142,7 +146,7 @@ function ProductDetailsRow ({id, index, productDetails, listOfProducts, updateLi
                                         sx={{height: "34px"}}
                                         className="xyz"
                                         fullWidth
-                                        onPointerDown={(e) => e.stopPropagation()}
+                                        value={productDetails.discount.type}
                                         onChange={(e) => handleDiscount(e?.target?.value, "discountType")}
                                     >
                                         <MenuItem value={"% Off"}>% off</MenuItem>
@@ -153,7 +157,6 @@ function ProductDetailsRow ({id, index, productDetails, listOfProducts, updateLi
                                     src={closeIcon}
                                     alt="Close icon"
                                     onClick={() => handleRemoveProductOrVariant(productDetails)}
-                                    onPointerDown={(e) => e.stopPropagation()}
                                 />
                             </>
                     }
@@ -161,19 +164,26 @@ function ProductDetailsRow ({id, index, productDetails, listOfProducts, updateLi
             </div>
             {productDetails.variants.length > 0 && 
                  <div className="product-list-variant-cnt">
-                    {productDetails.hideVariants ? <div className="product-list-variant-btn-img-cnt">
-                            <span onClick={() => handleShowHideVariants(productDetails)}>Show Variants</span>
-                            <img src={downArrowIcon} alt="" srcset="" />
+                    {productDetails.hideVariants ? 
+                        <div
+                            className="product-list-variant-btn-img-cnt"
+                            onClick={() => handleShowHideVariants(productDetails)}
+                        >
+                            <span>Show Variants</span>
+                            <img src={downArrowIcon} alt="" />
                         </div>
                         : <>
-                            <div className="product-list-variant-btn-img-cnt">
-                                <span onClick={() => handleShowHideVariants(productDetails)}>Hide Variants</span>
+                            <div 
+                                className="product-list-variant-btn-img-cnt"
+                                onClick={() => handleShowHideVariants(productDetails)}
+                            >
+                                <span>Hide Variants</span>
                                 <img src={upArrowIcon} alt="" />
                             </div>
                             {productDetails.variants.map((variantItem) =>
                                 <div className="product-list-variant-details-cnt">
-                                    <div><img src={bulletIcon} alt="Bullet icon" /></div>
-                                    <div style={discountAdded ? {width: "calc(50% - 22px)"} : {width: "calc(91% - 22px)"}}>
+                                    <div {...attributes} {...listeners}><img src={bulletIcon} alt="Bullet icon" /></div>
+                                    <div {...attributes} {...listeners} style={discountAdded ? {width: "calc(50% - 22px)"} : {width: "calc(91% - 22px)"}}>
                                         <span>{variantItem.title}</span>
                                     </div>
                                     {discountAdded && <div>
@@ -181,11 +191,8 @@ function ProductDetailsRow ({id, index, productDetails, listOfProducts, updateLi
                                             type="text"
                                             value={variantItem.discount.value}
                                             onChange={(e) => handleDiscount(e.currentTarget.value, "variantDiscount", variantItem)}
-                                            onPointerDown={(e) => e.stopPropagation()}
                                         />
-                                        <FormControl
-                                            sx={{width: "48%", height: "32px", backgroundColor: "white", borderRadius: "30px"}}
-                                        >
+                                        <FormControl sx={{width: "48%", height: "32px", backgroundColor: "white", borderRadius: "30px"}}>
                                             <Select
                                                 labelId="demo-simple-select-autowidth-label"
                                                 id="demo-simple-select-autowidth"
@@ -194,7 +201,6 @@ function ProductDetailsRow ({id, index, productDetails, listOfProducts, updateLi
                                                 className="xyz"
                                                 fullWidth
                                                 onChange={(e) => handleDiscount(e.target.value, "variantDiscountType", variantItem)}
-                                                onPointerDown={(e) => e.stopPropagation()}
                                             >
                                                 <MenuItem value="% Off">% off</MenuItem>
                                                 <MenuItem value="Flat">flat</MenuItem>
@@ -204,7 +210,6 @@ function ProductDetailsRow ({id, index, productDetails, listOfProducts, updateLi
                                             src={closeIcon}
                                             alt="Close icon"
                                             onClick={() => handleRemoveProductOrVariant(productDetails, variantItem)}
-                                            onPointerDown={(e) => e.stopPropagation()}
                                         />
                                     </div>}
                                 </div>
@@ -220,7 +225,6 @@ function ProductDetailsRow ({id, index, productDetails, listOfProducts, updateLi
                 aria-labelledby="modal-modal-title"
                 aria-describedby="modal-modal-description"
                 sx={{width: "100%", height: "100vh", display: "flex", alignItems: "center"}}
-                onPointerDown={(e) => e.stopPropagation()} 
             >
                 <ProductPicker updateProductList={updateProductList}/>
             </Modal>
