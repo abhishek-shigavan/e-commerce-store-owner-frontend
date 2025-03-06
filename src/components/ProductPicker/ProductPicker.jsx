@@ -110,7 +110,11 @@ function ProductPicker ({updateProductList, ...props}) {
         <div className="product-picker-main-cnt">
             <div className="product-picker-title-cnt">
                 <span>Select Products</span>
-                <img src={closeIcon} alt="Close icon" onClick={updateProductList} onPointerDown={(e) => e.stopPropagation()}/>
+                <img
+                    src={closeIcon}
+                    alt="Close icon" 
+                    onClick={updateProductList}
+                />
             </div>
             <div className="product-picker-search-cnt">
                 <img src={searchIcon} alt="Search icon" />
@@ -118,7 +122,6 @@ function ProductPicker ({updateProductList, ...props}) {
                     type="text"
                     placeholder="Search product"
                     onChange={(e) => handleSearchProduct(e.currentTarget.value)}
-                    onPointerDown={(e) => e.stopPropagation()} 
                 />
             </div>
             <div className="product-picker-search-divider-cnt"></div>
@@ -126,7 +129,6 @@ function ProductPicker ({updateProductList, ...props}) {
                 <div 
                     className="product-search-list-cnt"
                     onScroll={handlefetchProductsOnScroll}
-                    onPointerDown={(e) => e.stopPropagation()} 
                 >
                     {loading ? <div className="product-picker-loading-cnt"><CircularProgress /></div>
                         : !searchProdList.length ? <div className="product-picker-loading-cnt"><span>No products found</span></div>
@@ -137,7 +139,6 @@ function ProductPicker ({updateProductList, ...props}) {
                                         type="checkbox"
                                         onChange={() => handleSelectProduct(prod)}
                                         checked={selectedProdList.filter((item) => item.id == prod.id).length}
-                                        onPointerDown={(e) => e.stopPropagation()}    
                                     />
                                     <img src={prod?.image?.src} alt="" />
                                     <span>{prod?.title}</span>
@@ -149,7 +150,6 @@ function ProductPicker ({updateProductList, ...props}) {
                                                 type="checkbox"
                                                 onChange={() => handleSelectVariant(prod, prodVariant)}
                                                 checked={handleMarkUnmarkVariants(prod, prodVariant.id)}
-                                                onPointerDown={(e) => e.stopPropagation()}
                                             />
                                             <span>{prodVariant?.title}</span>
                                         </div>
@@ -169,14 +169,12 @@ function ProductPicker ({updateProductList, ...props}) {
                             <button 
                                 className="product-picker-cancel-btn"
                                 onClick={updateProductList}
-                                onPointerDown={(e) => e.stopPropagation()}
                             >
                                 Cancel
                             </button>
                             <button
                                 className="product-picker-add-btn"
                                 onClick={handleAddProduct}
-                                onPointerDown={(e) => e.stopPropagation()}
                             >
                                 Add
                             </button>
