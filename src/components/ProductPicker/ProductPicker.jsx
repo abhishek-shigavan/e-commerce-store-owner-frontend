@@ -53,14 +53,14 @@ function ProductPicker ({updateProductList, ...props}) {
         const isProductPresent = selectedProdList.filter((item) => item.id == product.id)
 
         isProductPresent.length ? setSelectedProdList(selectedProdList.filter((item) => item.id != product.id))
-            : setSelectedProdList([...selectedProdList, {pid: `prod${Math.random().toPrecision(4)*10000}`, id: product.id, product: product.title, discountSet: false, discount: {}, variants: product.variants, hideVariants: true}])
+            : setSelectedProdList([...selectedProdList, {pid: `prod${Math.random().toPrecision(4)*10000}`, id: product.id, product: product.title, discount: {value: "", type: "% Off"}, variants: product.variants, hideVariants: true}])
     }
 
     const handleSelectVariant = (product, variant) => {
         const isProductPresent = selectedProdList.filter((item) => item.id == product.id)
 
         if(!isProductPresent.length) {
-            setSelectedProdList([...selectedProdList, {pid: `prod${Math.random().toPrecision(4)*10000}`, id: product.id, product: product.title, discountSet: false, discount: {}, variants: [variant], hideVariants: true}])
+            setSelectedProdList([...selectedProdList, {pid: `prod${Math.random().toPrecision(4)*10000}`, id: product.id, product: product.title, discount: { value: "", type: "% Off"}, variants: [variant], hideVariants: true}])
         } else {
             const isVariantPresent = isProductPresent[0].variants.filter((item) => item.id == variant.id)
 
@@ -122,6 +122,7 @@ function ProductPicker ({updateProductList, ...props}) {
                 <div 
                     className="product-search-list-cnt"
                     onScroll={handlefetchProductsOnScroll}
+                    onPointerDown={(e) => e.stopPropagation()} 
                 >
                     {loading ? <div className="product-picker-loading-cnt"><CircularProgress /></div>
                         : !searchProdList.length ? <div className="product-picker-loading-cnt"><span>No products found</span></div>
