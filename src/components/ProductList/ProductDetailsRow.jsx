@@ -14,6 +14,7 @@ import { CSS } from "@dnd-kit/utilities"
 import "./ProductDetailsRow.scss"
 
 function ProductDetailsRow ({id, index, productDetails, listOfProducts, updateListOfProducts, ...props}) {
+    const [openProdPicker, setOpenProdPicker] = useState(false)
     const { attributes, listeners, setNodeRef, transform, transition } = useSortable({ id, 
         animateLayoutChanges: () => false 
     });
@@ -23,7 +24,6 @@ function ProductDetailsRow ({id, index, productDetails, listOfProducts, updateLi
         transform: CSS.Transform.toString(transform),
     }    
 
-    const [openProdPicker, setOpenProdPicker] = useState(false)
     
     const handleDiscount = (action, product, actionVal = "") => {
         if(action == "toggle") {
@@ -67,6 +67,19 @@ function ProductDetailsRow ({id, index, productDetails, listOfProducts, updateLi
         setOpenProdPicker("")
     }
 
+    const handleRemoveProductOrVariant = (product, variant=null) => {
+        if(variant) {
+            product.variants = product.variants.filter((item) => item.id != variant.id)
+            updateListOfProducts(listOfProducts.map((item) => {
+                if(item.id == product.id)
+                    return product
+                return item
+            }))    
+        } else {
+            updateListOfProducts(listOfProducts.filter(item => item.id !== product.id))
+        }
+    }
+
     return (
         <div 
             ref={setNodeRef}
@@ -102,7 +115,12 @@ function ProductDetailsRow ({id, index, productDetails, listOfProducts, updateLi
                                       <MenuItem value={"Flat"}>flat</MenuItem>
                                     </Select>
                                 </FormControl>
-                                <img src={closeIcon} alt="Close icon" />
+                                <img 
+                                    src={closeIcon}
+                                    alt="Close icon"
+                                    onClick={() => handleRemoveProductOrVariant(productDetails)}
+                                    onPointerDown={(e) => e.stopPropagation()}
+                                />
                             </>
                     }
                 </div>
@@ -136,11 +154,16 @@ function ProductDetailsRow ({id, index, productDetails, listOfProducts, updateLi
                                                 className="xyz"
                                                 fullWidth
                                                 >
-                                              <MenuItem value="% Off">% off</MenuItem>
-                                              <MenuItem value={"Flat"}>flat</MenuItem>
+                                              <MenuItem value="'% Off'">% off</MenuItem>
+                                              <MenuItem value="'Flat'">flat</MenuItem>
                                             </Select>
                                         </FormControl>
-                                        <img src={closeIcon} alt="Close icon" />
+                                        <img 
+                                            src={closeIcon}
+                                            alt="Close icon"
+                                            onClick={() => handleRemoveProductOrVariant(productDetails, variantItem)}
+                                            onPointerDown={(e) => e.stopPropagation()}
+                                        />
                                     </div>}
                                 </div>
                             )}
