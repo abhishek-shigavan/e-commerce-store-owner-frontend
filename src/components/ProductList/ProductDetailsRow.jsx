@@ -24,21 +24,55 @@ function ProductDetailsRow ({id, index, productDetails, listOfProducts, updateLi
     const style = {
         transition,
         transform: CSS.Transform.toString(transform),
-    }    
-
+    }
     
-    const handleDiscount = (val, action) => {
+    const getVariantsWithDiscount = (variantsList, value, action) => {
+        return variantsList.map((item) => {
+            return {
+                ...item,
+                discount: action === "discount" ? {...productDetails.discount, value: value} : {...productDetails.discount, type: value},
+            }
+        })
+    }
+
+    const handleDiscount = (val, action, variantObj = {}) => {
         let updatedList = []
         if(action === "discount" || action === "discountType") {
+            let isVariantDiscountAdded = false
+
+            for(let item of productDetails.variants) {
+                if(item.discount.value.length) {
+                    isVariantDiscountAdded = true
+                    return
+                }
+            }
+
             updatedList = listOfProducts.map(item => {
                 if(item.id == productDetails.id) {
                     return {
                         ...item,
-                        discount: action === "discount" ? {...productDetails.discount, value: val} : {...productDetails.discount, type: val}
+                        discount: action === "discount" ? {...productDetails.discount, value: val} : {...productDetails.discount, type: val},
+                        variants: isVariantDiscountAdded ? productDetails.variants : getVariantsWithDiscount(productDetails.variants, val, action)
                     }
                 }
                 return item
             })   
+        } else if(action === "variantDiscount" || action === "variantDiscountType") {
+            let updatedVariantsList = productDetails.variants.map(item => {
+                if(item.id === variantObj.id) {
+                    return {
+                        ...item,
+                        discount: action === "variantDiscount" ? {...variantObj.discount, value: val} : {...variantObj.discount, type: val}
+                    }
+                }
+                return item
+            })
+            updatedList = listOfProducts.map(item => {
+                if(item.id == productDetails.id) {
+                    return {...item, variants: updatedVariantsList}
+                }
+                return item
+            })
         }
         updateListOfProducts(updatedList)
     }
@@ -111,11 +145,11 @@ function ProductDetailsRow ({id, index, productDetails, listOfProducts, updateLi
                                         onPointerDown={(e) => e.stopPropagation()}
                                         onChange={(e) => handleDiscount(e?.target?.value, "discountType")}
                                     >
-                                      <MenuItem value={"% Off"}>% off</MenuItem>
-                                      <MenuItem value={"Flat"}>flat</MenuItem>
+                                        <MenuItem value={"% Off"}>% off</MenuItem>
+                                        <MenuItem value={"Flat"}>flat</MenuItem>
                                     </Select>
                                 </FormControl>
-                                <img 
+                                <img
                                     src={closeIcon}
                                     alt="Close icon"
                                     onClick={() => handleRemoveProductOrVariant(productDetails)}
@@ -143,7 +177,12 @@ function ProductDetailsRow ({id, index, productDetails, listOfProducts, updateLi
                                         <span>{variantItem.title}</span>
                                     </div>
                                     {discountAdded && <div>
-                                        <input type="text" value={productDetails.discount.value}/>
+                                        <input
+                                            type="text"
+                                            value={variantItem.discount.value}
+                                            onChange={(e) => handleDiscount(e.currentTarget.value, "variantDiscount", variantItem)}
+                                            onPointerDown={(e) => e.stopPropagation()}
+                                        />
                                         <FormControl
                                             sx={{width: "48%", height: "32px", backgroundColor: "white", borderRadius: "30px"}}
                                         >
@@ -151,10 +190,12 @@ function ProductDetailsRow ({id, index, productDetails, listOfProducts, updateLi
                                                 labelId="demo-simple-select-autowidth-label"
                                                 id="demo-simple-select-autowidth"
                                                 sx={{height: "32px", borderRadius: "30px"}}
-                                                value={productDetails.discount.type}
+                                                value={variantItem.discount.type}
                                                 className="xyz"
                                                 fullWidth
-                                                >
+                                                onChange={(e) => handleDiscount(e.target.value, "variantDiscountType", variantItem)}
+                                                onPointerDown={(e) => e.stopPropagation()}
+                                            >
                                                 <MenuItem value="% Off">% off</MenuItem>
                                                 <MenuItem value="Flat">flat</MenuItem>
                                             </Select>
