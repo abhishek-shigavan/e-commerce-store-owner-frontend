@@ -34,7 +34,8 @@
     justify-content: center;
 }
 .add-products-main-cnt {
-    width: 50%;
+    width: 30%;
+    min-width: 432px;
     display: flex;
     flex-direction: column;
     padding-top: 67px;
@@ -49,7 +50,7 @@
     }
 
     > button {
-        width: 193px;
+        width: 47%;
         height: 48px;
         margin-top: 21px;
         color: #008060;
@@ -71,18 +72,23 @@
     padding-top: 33px;
 
     >div:nth-child(1) {
-        width: 8%;
+        width: 30px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
     }
     >div:nth-child(2) {
-        width: 50%;
+        width: 52%;
+        min-width: 225px;
     }
     >div:nth-child(3) {
-        width: 35%;
+        width: 35.5%;
+        min-width: 151px;
         display: flex;
         justify-content: space-between;
 
         input {
-            width: calc(44% - 20px);
+            width: calc(39% - 20px);
             height: 32px;
             padding: 0px 10px;
             background: #FFFFFF;
@@ -113,7 +119,8 @@
     @extend .product-list-row;
 
     button {
-        width: 141px;
+        width: 100%;
+        min-width: 151px;
         height: 34px;
         border: 2px solid #008060;
         border-radius: 4px;
@@ -161,6 +168,7 @@
 
 }
 .product-list-variant-btn-img-cnt {
+    padding: 8px 0px;
     span {
         font-family: SF Pro Text;
         font-weight: 400;
@@ -181,12 +189,13 @@
     }
 }
 .product-list-variant-details-cnt {
-    width: 85%;
+    width: 89%;
     display: flex;
     align-items: center;
+    justify-content: space-between;
+    padding-bottom: 22px;
 
     >div:nth-child(2) {
-        width: calc(50% - 22px);
         height: 31px;
         display: flex;
         align-items: center;
@@ -205,12 +214,13 @@
         }
     }
     >div:nth-child(3) {
-        width: 35%;
+        width: 40%;
         display: flex;
         justify-content: space-between;
+        align-items: center;
 
         input {
-            width: calc(44% - 20px);
+            width: calc(40% - 20px);
             height: 32px;
             padding: 0px 10px;
             background: #FFFFFF;
