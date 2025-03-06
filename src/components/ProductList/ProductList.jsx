@@ -9,14 +9,13 @@ function ProductList () {
     const [listOfProducts, setListOfProducts] = useState([{
         pid: `prod${Math.random().toPrecision(4)*10000}`,
         product: "",
-        discountSet: false,
         discount: { value: "", type: "% Off"},
         variants: [],
         hideVariants: true
     }])
     
     const handleAddProduct = () => {
-        setListOfProducts([...listOfProducts, {pid: `prod${Math.random().toPrecision(4)*10000}`, product: "", discountSet: false, discount: {value: "", type: "% Off"}, variants: [], hideVariants: true}])
+        setListOfProducts([...listOfProducts, {pid: `prod${Math.random().toPrecision(4)*10000}`, product: "", discount: {value: "", type: "% Off"}, variants: [], hideVariants: true}])
     }
    
     const getTaskPos = (id) => listOfProducts.findIndex((product) => product.pid === id)
