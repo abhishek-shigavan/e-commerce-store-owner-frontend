@@ -15,6 +15,8 @@ import "./ProductDetailsRow.scss"
 
 function ProductDetailsRow ({id, index, productDetails, listOfProducts, updateListOfProducts, ...props}) {
     const [openProdPicker, setOpenProdPicker] = useState(false)
+    const [discountAdded, setDiscountAdded] = useState(productDetails?.discount?.value.length ? true : false)
+
     const { attributes, listeners, setNodeRef, transform, transition } = useSortable({ id, 
         animateLayoutChanges: () => false 
     });
@@ -25,26 +27,20 @@ function ProductDetailsRow ({id, index, productDetails, listOfProducts, updateLi
     }    
 
     
-    const handleDiscount = (action, product, actionVal = "") => {
-        if(action == "toggle") {
-            updateListOfProducts(listOfProducts.map(item => {
-                if(item.pid == product.pid) {
-                    return {...item, discountSet: true}
+    const handleDiscount = (val, action) => {
+        let updatedList = []
+        if(action === "discount" || action === "discountType") {
+            updatedList = listOfProducts.map(item => {
+                if(item.id == productDetails.id) {
+                    return {
+                        ...item,
+                        discount: action === "discount" ? {...productDetails.discount, value: val} : {...productDetails.discount, type: val}
+                    }
                 }
                 return item
-            }))
-            return
+            })   
         }
-        if(action == "discount") {
-            updateListOfProducts(listOfProducts.map(item => {
-                if(item.pid == product.pid) {
-                    return {...item, discount: {...product.discount, value: actionVal}}
-                }
-                return item
-            }))   
-        } else {
-            console.log(actionVal); 
-        }
+        updateListOfProducts(updatedList)
     }
 
     const handleShowHideVariants = (product) => {
@@ -95,10 +91,14 @@ function ProductDetailsRow ({id, index, productDetails, listOfProducts, updateLi
                     <img src={penIcon} alt="Pencil Icon" onClick={() => setOpenProdPicker(productDetails.pid)} onPointerDown={(e) => e.stopPropagation()} />
                 </div>
                 <div>
-                    {!productDetails.discountSet ? <button onClick={() => handleDiscount("toggle", productDetails)} onPointerDown={(e) => e.stopPropagation()}>Add Discount</button>
+                    {!discountAdded ? <button onClick={() => setDiscountAdded(true)} onPointerDown={(e) => e.stopPropagation()}>Add Discount</button>
                         : 
                             <>
-                                <input onPointerDown={(e) => e.stopPropagation()} onChange={(e) => handleDiscount("discount", productDetails, e.currentTarget.value)}/>
+                                <input 
+                                    onPointerDown={(e) => e.stopPropagation()}
+                                    onChange={(e) => handleDiscount(e.currentTarget.value, "discount")}
+                                    value={productDetails?.discount?.value}    
+                                />
                                 <FormControl
                                     sx={{width: "48%", height: "32px", backgroundColor: "white"}}
                                 >
@@ -109,7 +109,7 @@ function ProductDetailsRow ({id, index, productDetails, listOfProducts, updateLi
                                         className="xyz"
                                         fullWidth
                                         onPointerDown={(e) => e.stopPropagation()}
-                                        onChange={(e) => handleDiscount("discountType", productDetails, e.currentTarget.value)}
+                                        onChange={(e) => handleDiscount(e?.target?.value, "discountType")}
                                     >
                                       <MenuItem value={"% Off"}>% off</MenuItem>
                                       <MenuItem value={"Flat"}>flat</MenuItem>
@@ -139,10 +139,10 @@ function ProductDetailsRow ({id, index, productDetails, listOfProducts, updateLi
                             {productDetails.variants.map((variantItem) =>
                                 <div className="product-list-variant-details-cnt">
                                     <div><img src={bulletIcon} alt="Bullet icon" /></div>
-                                    <div style={productDetails.discountSet ? {width: "calc(50% - 22px)"} : {width: "calc(91% - 22px)"}}>
+                                    <div style={discountAdded ? {width: "calc(50% - 22px)"} : {width: "calc(91% - 22px)"}}>
                                         <span>{variantItem.title}</span>
                                     </div>
-                                    {productDetails.discountSet && <div>
+                                    {discountAdded && <div>
                                         <input type="text" value={productDetails.discount.value}/>
                                         <FormControl
                                             sx={{width: "48%", height: "32px", backgroundColor: "white", borderRadius: "30px"}}
@@ -151,11 +151,12 @@ function ProductDetailsRow ({id, index, productDetails, listOfProducts, updateLi
                                                 labelId="demo-simple-select-autowidth-label"
                                                 id="demo-simple-select-autowidth"
                                                 sx={{height: "32px", borderRadius: "30px"}}
+                                                value={productDetails.discount.type}
                                                 className="xyz"
                                                 fullWidth
                                                 >
-                                              <MenuItem value="'% Off'">% off</MenuItem>
-                                              <MenuItem value="'Flat'">flat</MenuItem>
+                                                <MenuItem value="% Off">% off</MenuItem>
+                                                <MenuItem value="Flat">flat</MenuItem>
                                             </Select>
                                         </FormControl>
                                         <img 
