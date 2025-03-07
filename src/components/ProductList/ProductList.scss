@@ -69,7 +69,7 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding-top: 33px;
+    padding-top: 20px;
 
     >div:nth-child(1) {
         width: 30px;
@@ -113,79 +113,6 @@
         font-size: 14px;
         line-height: 16px;
         letter-spacing: 0px;
-    }
-}
-.products-list-data-row {
-    @extend .product-list-row;
-
-    button {
-        width: 100%;
-        min-width: 151px;
-        height: 34px;
-        border: 2px solid #008060;
-        border-radius: 4px;
-        background: #008060;
-        color: white;
-        font-family: SF Pro Text;
-        font-weight: 600;
-        font-size: 14px;
-        line-height: 20px;
-        letter-spacing: 0px;
-        &:hover {
-            cursor: pointer;
-        }
-    }
-}
-.list-product-title-cnt {
-    display: flex;
-    height: 32px;
-    justify-content: space-between;
-    align-items: center;
-    background: #FFFFFF;
-    border: 1px solid #00000012;
-    box-shadow: 0px 2px 4px 0px #0000001A;
-
-    >span {
-        font-family: SF Pro Text;
-        font-weight: 400;
-        font-size: 14px;
-        line-height: 21px;
-        letter-spacing: 0px;
-        padding-left: 10px;
-    }
-    img {
-        margin-right: 10px;
-        &:hover {
-            cursor: pointer;
-        }
-    }
-}
-.product-list-variant-cnt {
-    width: 100%;
-    display: flex;
-    flex-direction: column;
-    align-items: flex-end;
-
-}
-.product-list-variant-btn-img-cnt {
-    padding: 8px 0px;
-    span {
-        font-family: SF Pro Text;
-        font-weight: 400;
-        font-size: 12px;
-        line-height: 21px;
-        letter-spacing: 0px;
-        text-decoration: underline;
-        text-decoration-style: solid;
-        text-decoration-offset: Auto;
-        text-decoration-thickness: Auto;
-        color: #006EFF;
-    }
-    img {
-        margin-left: 10px;
-    }
-    &:hover {
-        cursor: pointer;
     }
 }
 .product-list-variant-details-cnt {
