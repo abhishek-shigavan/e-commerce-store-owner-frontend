@@ -9,14 +9,17 @@ import FormControl from '@mui/material/FormControl'
 import Select from '@mui/material/Select'
 import Modal from '@mui/material/Modal'
 import ProductPicker from "../ProductPicker/ProductPicker"
-import { useSortable } from "@dnd-kit/sortable"
+import { arrayMove, SortableContext, useSortable, verticalListSortingStrategy } from "@dnd-kit/sortable"
 import { CSS } from "@dnd-kit/utilities"
+import { closestCorners, DndContext } from "@dnd-kit/core"
+import ProductVariantRow from "./ProductVariantRow"
 import "./ProductDetailsRow.scss"
 
 function ProductDetailsRow ({id, index, productDetails, listOfProducts, updateListOfProducts, ...props}) {
     const [openProdPicker, setOpenProdPicker] = useState(false)
     const [discountAdded, setDiscountAdded] = useState(productDetails?.discount?.value.length ? true : false)
     const [hideVariants, setHideVariants] = useState(true)
+    const [listOfVariants, setListOfVariants] = useState(productDetails?.variants || [])
 
     const { attributes, listeners, setNodeRef, transform, transition } = useSortable({ id });
 
@@ -115,15 +118,29 @@ function ProductDetailsRow ({id, index, productDetails, listOfProducts, updateLi
         }
     }
 
+
+    const getTaskPos = (id) => listOfVariants.findIndex((variant) => variant.id === id)
+    
+    const handleDragEnd = (event) => {
+        const { active, over } = event
+        if (active.id === over.id) return
+
+        setListOfVariants((variant) => {
+            const originalPos = getTaskPos(active.id)
+            const newPos = getTaskPos(over.id)
+            return arrayMove(variant, originalPos, newPos)
+        })  
+    }
+
     return (
         <div
             ref={setNodeRef}
             style={style}
             className="product-details-row-main-cnt"
         >
-            <div className="products-list-data-row">
+            <div className="products-details-data-row">
                 <div {...attributes} {...listeners}><img src={bulletIcon} alt="Bullet icon" />{index}.</div>
-                <div className="list-product-title-cnt">
+                <div className="product-details-data-row-title-cnt">
                     <span {...attributes} {...listeners}>{productDetails.product.length > 0 ? productDetails.product : "Select Product"}</span>
                     <img
                         src={penIcon} 
@@ -149,7 +166,6 @@ function ProductDetailsRow ({id, index, productDetails, listOfProducts, updateLi
                                         labelId="demo-simple-select-autowidth-label"
                                         id="demo-simple-select-autowidth"
                                         sx={{height: "34px"}}
-                                        className="xyz"
                                         fullWidth
                                         value={productDetails.discount.type}
                                         onChange={(e) => handleDiscount(e?.target?.value, "discountType")}
@@ -167,8 +183,8 @@ function ProductDetailsRow ({id, index, productDetails, listOfProducts, updateLi
                     }
                 </div>
             </div>
-            {productDetails.variants.length > 0 && 
-                 <div className="product-list-variant-cnt">
+            {/* {productDetails.variants.length > 0 && 
+                <div className="product-list-variant-cnt">
                     {hideVariants ? 
                         <div
                             className="product-list-variant-btn-img-cnt"
@@ -219,6 +235,43 @@ function ProductDetailsRow ({id, index, productDetails, listOfProducts, updateLi
                                     </div>}
                                 </div>
                             )}
+                            <div className="product-list-variants-divider"></div>
+                        </>
+                    }        
+                </div>
+            } */}
+
+
+            {productDetails.variants.length > 0 && 
+                <div className="product-list-variant-cnt">
+                    {hideVariants ? 
+                        <div
+                            className="product-list-variant-btn-img-cnt"
+                            onClick={() => setHideVariants(!hideVariants)}
+                        >
+                            <span>Show Variants</span>
+                            <img src={downArrowIcon} alt="" />
+                        </div>
+                        : <>
+                            <div 
+                                className="product-list-variant-btn-img-cnt"
+                                onClick={() => setHideVariants(!hideVariants)}
+                            >
+                                <span>Hide Variants</span>
+                                <img src={upArrowIcon} alt="" />
+                            </div>
+                            <div style={{width: "100%", display: "flex", flexDirection:"column", gap: "15px"}}>
+                                <DndContext
+                                    collisionDetection={closestCorners}
+                                    onDragEnd={handleDragEnd}
+                                >
+                                    <SortableContext items={listOfVariants.map((item) => item.id)} strategy={verticalListSortingStrategy}>
+                                        {listOfVariants.map((item, index) =>
+                                            <ProductVariantRow key={item.id} id={item.id} variantDetails={item} listOfVariants={listOfVariants} updateListOfProducts={setListOfVariants} showDiscount={discountAdded}/>
+                                        )}
+                                    </SortableContext>
+                                </DndContext>
+                            </div>
                             <div className="product-list-variants-divider"></div>
                         </>
                     }        
