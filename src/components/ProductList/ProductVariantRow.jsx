@@ -5,8 +5,9 @@ import FormControl from '@mui/material/FormControl'
 import Select from '@mui/material/Select'
 import { useSortable } from "@dnd-kit/sortable"
 import { CSS } from "@dnd-kit/utilities"
+import "./ProductVariantRow.scss"
 
-function ProductVariantRow ({id, variantDetails, listOfVariants, variantsList, showDiscount = false, ...props}) {
+function ProductVariantRow ({id, variantDetails, listOfVariants, updateListOfVariants, showDiscount = false, ...props}) {
 
     const { attributes, listeners, setNodeRef, transform, transition } = useSortable({ id });
     const style = {
@@ -14,11 +15,29 @@ function ProductVariantRow ({id, variantDetails, listOfVariants, variantsList, s
         transform: CSS.Transform.toString(transform),
     }    
     
+    const handleDiscount = (val, action) => {
+        let updatedVariantsList = listOfVariants.map(item => {
+            if(item.id === variantDetails.id) {
+                return {
+                    ...item,
+                    discount: action === "discount" ? {...variantDetails.discount, value: val} : {...variantDetails.discount, type: val}
+                }
+            }
+            return item
+        })  
+        updateListOfVariants(updatedVariantsList)
+    }
+
+    const handleRemoveVariant = () => {
+        updateListOfVariants(listOfVariants.filter((item) => item.id != variantDetails.id))
+    }
+
+
     return (
         <div
             ref={setNodeRef}
             style={style}
-            className="product-list-variant-details-cnt"
+            className="product-variant-row-details-cnt"
         >
             <div {...attributes} {...listeners}><img src={bulletIcon} alt="Bullet icon" /></div>
             <div {...attributes} {...listeners} style={showDiscount ? {width: "calc(50% - 22px)"} : {width: "calc(91% - 22px)"}}>
@@ -28,7 +47,7 @@ function ProductVariantRow ({id, variantDetails, listOfVariants, variantsList, s
                 <input
                     type="text"
                     value={variantDetails.discount.value}
-                    // onChange={(e) => handleDiscount(e.currentTarget.value, "variantDiscount", variantItem)}
+                    onChange={(e) => handleDiscount(e.currentTarget.value, "discount")}
                 />
                 <FormControl sx={{width: "48%", height: "32px", backgroundColor: "white", borderRadius: "30px"}}>
                     <Select
@@ -38,7 +57,7 @@ function ProductVariantRow ({id, variantDetails, listOfVariants, variantsList, s
                         value={variantDetails.discount.type}
                         className="xyz"
                         fullWidth
-                        // onChange={(e) => handleDiscount(e.target.value, "variantDiscountType", variantItem)}
+                        onChange={(e) => handleDiscount(e.target.value, "discountType")}
                     >
                         <MenuItem value="% Off">% off</MenuItem>
                         <MenuItem value="Flat">flat</MenuItem>
@@ -47,7 +66,7 @@ function ProductVariantRow ({id, variantDetails, listOfVariants, variantsList, s
                 <img 
                     src={closeIcon}
                     alt="Close icon"
-                    // onClick={() => handleRemoveProductOrVariant(productDetails, variantItem)}
+                    onClick={handleRemoveVariant}
                 />
             </div>}
         </div>
