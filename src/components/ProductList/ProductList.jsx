@@ -9,20 +9,18 @@ function ProductList () {
     const [listOfProducts, setListOfProducts] = useState([{
         pid: `prod${Math.random().toPrecision(4)*10000}`,
         product: "",
-        discount: { value: "", type: "% Off"},
+        discount: {value: "", type: ""},
         variants: [],
-        hideVariants: true
     }])
     
     const handleAddProduct = () => {
-        setListOfProducts([...listOfProducts, {pid: `prod${Math.random().toPrecision(4)*10000}`, product: "", discount: {value: "", type: "% Off"}, variants: [], hideVariants: true}])
+        setListOfProducts([...listOfProducts, {pid: `prod${Math.random().toPrecision(4)*10000}`, product: "", discount: {value: "", type: ""}, variants: []}])
     }
    
     const getTaskPos = (id) => listOfProducts.findIndex((product) => product.pid === id)
 
     const handleDragEnd = (event) => {
         const { active, over } = event
-
         if (active.id === over.id) return
 
         setListOfProducts((products) => {
@@ -40,6 +38,12 @@ function ProductList () {
             </header>
             <section className="product-list-content-cnt">
                 <div className="add-products-main-cnt">
+                    <span>Add Products</span>
+                    <div className="products-list-head-row">
+                        <div></div>
+                        <div><span>Product</span></div>
+                        <div><span>Discount</span></div>
+                    </div>
                     <div style={{width: "100%", display: "flex", flexDirection:"column", gap: "15px"}}>
                         <DndContext
                             collisionDetection={closestCorners}
