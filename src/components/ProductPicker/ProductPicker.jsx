@@ -50,26 +50,26 @@ function ProductPicker ({updateProductList, ...props}) {
     }, 1000)
    
     const getVariantsWithDiscount = (variantsList) => {
-        return variantsList.map((item) => {return {...item, discount: {value: "", type: "% Off"}}})
+        return variantsList.map((item) => {return {...item, discount: {value: "", type: ""}}})
     }
 
     const handleSelectProduct = (product) => {
         const isProductPresent = selectedProdList.filter((item) => item.id == product.id)
 
         isProductPresent.length ? setSelectedProdList(selectedProdList.filter((item) => item.id != product.id))
-            : setSelectedProdList([...selectedProdList, {pid: `prod${Math.random().toPrecision(4)*10000}`, id: product.id, product: product.title, discount: {value: "", type: "% Off"}, variants: getVariantsWithDiscount(product.variants), hideVariants: true}])
+            : setSelectedProdList([...selectedProdList, {pid: `prod${Math.random().toPrecision(4)*10000}`, id: product.id, product: product.title, discount: {value: "", type: ""}, variants: getVariantsWithDiscount(product.variants)}])
     }
 
     const handleSelectVariant = (product, variant) => {
         const isProductPresent = selectedProdList.filter((item) => item.id == product.id)
 
         if(!isProductPresent.length) {
-            setSelectedProdList([...selectedProdList, {pid: `prod${Math.random().toPrecision(4)*10000}`, id: product.id, product: product.title, discount: { value: "", type: "% Off"}, variants: [{...variant, discount: {value: "", type: "% Off"}}], hideVariants: true}])
+            setSelectedProdList([...selectedProdList, {pid: `prod${Math.random().toPrecision(4)*10000}`, id: product.id, product: product.title, discount: { value: "", type: ""}, variants: [{...variant, discount: {value: "", type: ""}}]}])
         } else {
             const isVariantPresent = isProductPresent[0].variants.filter((item) => item.id == variant.id)
 
             isVariantPresent.length ? isProductPresent[0].variants = isProductPresent[0].variants.filter((item) => item.id != variant.id)
-                : isProductPresent[0].variants = [...isProductPresent[0].variants, {...variant, discount: {value: "", type: "% Off"}}]
+                : isProductPresent[0].variants = [...isProductPresent[0].variants, {...variant, discount: {value: "", type: ""}}]
 
             setSelectedProdList(selectedProdList.map((item) => {
                 if(item.id == isProductPresent[0].id)
@@ -91,18 +91,22 @@ function ProductPicker ({updateProductList, ...props}) {
         updateProductList(selectedProdList)
     }
 
-    const handlefetchProductsOnScroll = delayedAPICall(() => {
+    const handlefetchProductsOnScroll = delayedAPICall(async() => {
         if(pageNo) {
-            searchProductsApiCall(searchQuery, pageNo + 1).then((res) => {
+            setLoading(true)
+            try {
+                const res = await searchProductsApiCall(searchQuery, pageNo + 1)
                 if (res.data == null) {
                     setPageNo(0)
+                    setLoading(false)
                     return
                 }
+                setLoading(false)
                 setSearchProdList([...searchProdList, ...res.data])
                 setPageNo(pageNo + 1)
-            }).catch((err) => {
-                console.log(err);
-            })
+            }catch (err) {
+                setLoading(false)
+            }
         }    
     }, 700)
 
@@ -130,7 +134,7 @@ function ProductPicker ({updateProductList, ...props}) {
                     className="product-search-list-cnt"
                     onScroll={handlefetchProductsOnScroll}
                 >
-                    {loading ? <div className="product-picker-loading-cnt"><CircularProgress /></div>
+                    {(loading && searchProdList.length === 0) ? <div className="product-picker-loading-cnt"><CircularProgress /></div>
                         : !searchProdList.length ? <div className="product-picker-loading-cnt"><span>No products found</span></div>
                         : searchProdList.map((prod) =>
                             <>
@@ -160,7 +164,8 @@ function ProductPicker ({updateProductList, ...props}) {
                                     </div>
                                 )}
                             </>
-                        )}
+                    )}
+                    {(loading && searchProdList.length > 0)  && <div className="product-picker-loading-cnt"><CircularProgress /></div>}
                 </div>
                 {searchProdList.length > 0 && 
                     <div className="product-picker-action-cnt">
