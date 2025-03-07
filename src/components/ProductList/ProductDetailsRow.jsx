@@ -16,6 +16,7 @@ import "./ProductDetailsRow.scss"
 function ProductDetailsRow ({id, index, productDetails, listOfProducts, updateListOfProducts, ...props}) {
     const [openProdPicker, setOpenProdPicker] = useState(false)
     const [discountAdded, setDiscountAdded] = useState(productDetails?.discount?.value.length ? true : false)
+    const [hideVariants, setHideVariants] = useState(true)
 
     const { attributes, listeners, setNodeRef, transform, transition } = useSortable({ id });
 
@@ -28,10 +29,24 @@ function ProductDetailsRow ({id, index, productDetails, listOfProducts, updateLi
         return variantsList.map((item) => {
             return {
                 ...item,
-                discount: action === "discount" ? {...productDetails.discount, value: value} : {...productDetails.discount, type: value},
+                discount: action === "discount" ? {...item.discount, value: value} : {...item.discount, type: value},
             }
         })
     }
+
+    const delayInputValueChange = (cb, delay = 1000) => {
+        let timeout
+        return (...args) => {
+            clearTimeout(timeout)
+            timeout = setTimeout(() => {
+                cb(...args)
+            }, delay)
+        }
+    }
+
+    const handleProductDiscountChange = delayInputValueChange((e) => {
+        handleDiscount(e.target.value, "discount")
+    }, 700)
 
     const handleDiscount = (val, action, variantObj = {}) => {
         let updatedList = []
@@ -39,9 +54,10 @@ function ProductDetailsRow ({id, index, productDetails, listOfProducts, updateLi
             let isVariantDiscountAdded = false
 
             for(let item of productDetails.variants) {
-                if(item.discount.value.length) {
+                let isPresent = action === "discount" ? item.discount.value.length : item.discount.type.length
+                if(isPresent) {
                     isVariantDiscountAdded = true
-                    return
+                    break
                 }
             }
 
@@ -73,15 +89,6 @@ function ProductDetailsRow ({id, index, productDetails, listOfProducts, updateLi
             })
         }
         updateListOfProducts(updatedList)
-    }
-
-    const handleShowHideVariants = (product) => {
-        updateListOfProducts(listOfProducts.map(item => {
-            if(item.id == product.id) {
-                return {...item, hideVariants: !product.hideVariants}
-            }
-            return item
-        }))   
     }
 
     const updateProductList = (selectedProduct = []) => {
@@ -134,12 +141,10 @@ function ProductDetailsRow ({id, index, productDetails, listOfProducts, updateLi
                         : 
                             <>
                                 <input 
-                                    onChange={(e) => handleDiscount(e.currentTarget.value, "discount")}
-                                    value={productDetails?.discount?.value}    
+                                    onChange={(e) => handleProductDiscountChange(e)}
+                                    // value={productDetails?.discount?.value}    
                                 />
-                                <FormControl
-                                    sx={{width: "48%", height: "32px", backgroundColor: "white"}}
-                                >
+                                <FormControl sx={{width: "48%", height: "32px", backgroundColor: "white"}}>
                                     <Select
                                         labelId="demo-simple-select-autowidth-label"
                                         id="demo-simple-select-autowidth"
@@ -164,10 +169,10 @@ function ProductDetailsRow ({id, index, productDetails, listOfProducts, updateLi
             </div>
             {productDetails.variants.length > 0 && 
                  <div className="product-list-variant-cnt">
-                    {productDetails.hideVariants ? 
+                    {hideVariants ? 
                         <div
                             className="product-list-variant-btn-img-cnt"
-                            onClick={() => handleShowHideVariants(productDetails)}
+                            onClick={() => setHideVariants(!hideVariants)}
                         >
                             <span>Show Variants</span>
                             <img src={downArrowIcon} alt="" />
@@ -175,7 +180,7 @@ function ProductDetailsRow ({id, index, productDetails, listOfProducts, updateLi
                         : <>
                             <div 
                                 className="product-list-variant-btn-img-cnt"
-                                onClick={() => handleShowHideVariants(productDetails)}
+                                onClick={() => setHideVariants(!hideVariants)}
                             >
                                 <span>Hide Variants</span>
                                 <img src={upArrowIcon} alt="" />
