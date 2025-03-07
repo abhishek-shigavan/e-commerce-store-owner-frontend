@@ -51,47 +51,27 @@ function ProductDetailsRow ({id, index, productDetails, listOfProducts, updateLi
         handleDiscount(e.target.value, "discount")
     }, 700)
 
-    const handleDiscount = (val, action, variantObj = {}) => {
-        let updatedList = []
-        if(action === "discount" || action === "discountType") {
-            let isVariantDiscountAdded = false
+    const handleDiscount = (val, action) => {
+        let isVariantDiscountAdded = false
+        for(let item of productDetails.variants) {
+            let isPresent = action === "discount" ? item.discount.value.length : item.discount.type.length
+            if(isPresent) {
+                isVariantDiscountAdded = true
+                break
+            }
+        }
 
-            for(let item of productDetails.variants) {
-                let isPresent = action === "discount" ? item.discount.value.length : item.discount.type.length
-                if(isPresent) {
-                    isVariantDiscountAdded = true
-                    break
+        const updatedListOfProducts = listOfProducts.map(item => {
+            if(item.id == productDetails.id) {
+                return {
+                    ...item,
+                    discount: action === "discount" ? {...productDetails.discount, value: val} : {...productDetails.discount, type: val},
+                    variants: isVariantDiscountAdded ? productDetails.variants : getVariantsWithDiscount(productDetails.variants, val, action)
                 }
             }
-
-            updatedList = listOfProducts.map(item => {
-                if(item.id == productDetails.id) {
-                    return {
-                        ...item,
-                        discount: action === "discount" ? {...productDetails.discount, value: val} : {...productDetails.discount, type: val},
-                        variants: isVariantDiscountAdded ? productDetails.variants : getVariantsWithDiscount(productDetails.variants, val, action)
-                    }
-                }
-                return item
-            })   
-        } else if(action === "variantDiscount" || action === "variantDiscountType") {
-            let updatedVariantsList = productDetails.variants.map(item => {
-                if(item.id === variantObj.id) {
-                    return {
-                        ...item,
-                        discount: action === "variantDiscount" ? {...variantObj.discount, value: val} : {...variantObj.discount, type: val}
-                    }
-                }
-                return item
-            })
-            updatedList = listOfProducts.map(item => {
-                if(item.id == productDetails.id) {
-                    return {...item, variants: updatedVariantsList}
-                }
-                return item
-            })
-        }
-        updateListOfProducts(updatedList)
+            return item
+        })   
+        updateListOfProducts(updatedListOfProducts)
     }
 
     const updateProductList = (selectedProduct = []) => {
@@ -105,19 +85,19 @@ function ProductDetailsRow ({id, index, productDetails, listOfProducts, updateLi
         setOpenProdPicker("")
     }
 
-    const handleRemoveProductOrVariant = (product, variant=null) => {
-        if(variant) {
-            product.variants = product.variants.filter((item) => item.id != variant.id)
-            updateListOfProducts(listOfProducts.map((item) => {
-                if(item.id == product.id)
-                    return product
-                return item
-            }))    
-        } else {
-            updateListOfProducts(listOfProducts.filter(item => item.id !== product.id))
-        }
+    const handleRemoveProduct = () => {
+        updateListOfProducts(listOfProducts.filter(item => item.id !== productDetails.id))
     }
 
+    const handleListOfVariantsUpdate = (updatedVariantsList) => {
+        const updatedListOfProducts = listOfProducts.map((item) => {
+            if(item.id == productDetails.id) {
+                return {...productDetails, variants: updatedVariantsList}
+            }
+            return productDetails
+        })
+        updateListOfProducts(updatedListOfProducts)
+    }
 
     const getTaskPos = (id) => listOfVariants.findIndex((variant) => variant.id === id)
     
@@ -177,7 +157,7 @@ function ProductDetailsRow ({id, index, productDetails, listOfProducts, updateLi
                                 <img
                                     src={closeIcon}
                                     alt="Close icon"
-                                    onClick={() => handleRemoveProductOrVariant(productDetails)}
+                                    onClick={handleRemoveProduct}
                                 />
                             </>
                     }
@@ -267,7 +247,7 @@ function ProductDetailsRow ({id, index, productDetails, listOfProducts, updateLi
                                 >
                                     <SortableContext items={listOfVariants.map((item) => item.id)} strategy={verticalListSortingStrategy}>
                                         {listOfVariants.map((item, index) =>
-                                            <ProductVariantRow key={item.id} id={item.id} variantDetails={item} listOfVariants={listOfVariants} updateListOfProducts={setListOfVariants} showDiscount={discountAdded}/>
+                                            <ProductVariantRow key={item.id} id={item.id} variantDetails={item} listOfVariants={listOfVariants} updateListOfVariants={handleListOfVariantsUpdate} showDiscount={discountAdded}/>
                                         )}
                                     </SortableContext>
                                 </DndContext>
