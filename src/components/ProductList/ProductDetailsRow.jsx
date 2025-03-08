@@ -134,29 +134,35 @@ function ProductDetailsRow ({id, index, productDetails, listOfProducts, updateLi
                 <div>
                     {!discountAdded ?
                         <button
-                            onClick={() => setDiscountAdded(true)}
+                            onClick={() => {
+                                if(!productDetails.product?.length) return
+                                setDiscountAdded(true)
+
+                            }}
                         >
                             Add Discount
                         </button>
                         : 
                             <>
-                                <input 
-                                    onChange={(e) => handleProductDiscountChange(e)}
-                                    // value={productDetails?.discount?.value}    
-                                />
-                                <FormControl sx={{width: "48%", height: "32px", backgroundColor: "white"}}>
-                                    <Select
-                                        labelId="demo-simple-select-autowidth-label"
-                                        id="demo-simple-select-autowidth"
-                                        sx={{height: "34px"}}
-                                        fullWidth
-                                        value={productDetails.discount.type}
-                                        onChange={(e) => handleDiscount(e?.target?.value, "discountType")}
-                                    >
-                                        <MenuItem value={"% Off"}>% off</MenuItem>
-                                        <MenuItem value={"Flat"}>flat</MenuItem>
-                                    </Select>
-                                </FormControl>
+                                <div className="product-details-discount-cnt">
+                                    <input 
+                                        onChange={(e) => handleProductDiscountChange(e)}
+                                        // value={productDetails?.discount?.value}    
+                                    />
+                                    <FormControl sx={{width: "48%", height: "32px", backgroundColor: "white"}}>
+                                        <Select
+                                            labelId="demo-simple-select-autowidth-label"
+                                            id="demo-simple-select-autowidth"
+                                            sx={{height: "34px"}}
+                                            fullWidth
+                                            value={productDetails.discount.type}
+                                            onChange={(e) => handleDiscount(e?.target?.value, "discountType")}
+                                        >
+                                            <MenuItem value={"% Off"}>% off</MenuItem>
+                                            <MenuItem value={"Flat"}>flat</MenuItem>
+                                        </Select>
+                                    </FormControl>
+                                </div>
                                 <img
                                     src={closeIcon}
                                     alt="Close icon"

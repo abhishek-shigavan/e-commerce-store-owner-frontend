@@ -40,35 +40,37 @@ function ProductVariantRow ({id, variantDetails, listOfVariants, updateListOfVar
             className="product-variant-row-details-cnt"
         >
             <div {...attributes} {...listeners}><img src={bulletIcon} alt="Bullet icon" /></div>
-            <div {...attributes} {...listeners} style={showDiscount ? {width: "calc(50% - 22px)"} : {width: "calc(91% - 22px)"}}>
+            <div {...attributes} {...listeners} style={showDiscount ? {width: "calc(51% - 22px)"} : {width: "calc(91% - 22px)"}}>
                 <span>{variantDetails.title}</span>
             </div>
-            {showDiscount && <div>
-                <input
-                    type="text"
-                    value={variantDetails.discount.value}
-                    onChange={(e) => handleDiscount(e.currentTarget.value, "discount")}
-                />
-                <FormControl sx={{width: "48%", height: "32px", backgroundColor: "white", borderRadius: "30px"}}>
-                    <Select
-                        labelId="demo-simple-select-autowidth-label"
-                        id="demo-simple-select-autowidth"
-                        sx={{height: "32px", borderRadius: "30px"}}
-                        value={variantDetails.discount.type}
-                        className="xyz"
-                        fullWidth
-                        onChange={(e) => handleDiscount(e.target.value, "discountType")}
-                    >
-                        <MenuItem value="% Off">% off</MenuItem>
-                        <MenuItem value="Flat">flat</MenuItem>
-                    </Select>
-                </FormControl>
+            <div style={!showDiscount ? {width: "14px"} : {}}>
+                {showDiscount && <div className="product-variant-discount-cnt">
+                    <input
+                        type="text"
+                        value={variantDetails.discount.value}
+                        onChange={(e) => handleDiscount(e.currentTarget.value, "discount")}
+                        />
+                    <FormControl sx={{width: "48%", height: "32px", backgroundColor: "white", borderRadius: "30px"}}>
+                        <Select
+                            labelId="demo-simple-select-autowidth-label"
+                            id="demo-simple-select-autowidth"
+                            sx={{height: "32px", borderRadius: "30px"}}
+                            value={variantDetails.discount.type}
+                            className="xyz"
+                            fullWidth
+                            onChange={(e) => handleDiscount(e.target.value, "discountType")}
+                            >
+                            <MenuItem value="% Off">% off</MenuItem>
+                            <MenuItem value="Flat">flat</MenuItem>
+                        </Select>
+                    </FormControl>
+                </div>}
                 <img 
                     src={closeIcon}
                     alt="Close icon"
                     onClick={handleRemoveVariant}
                 />
-            </div>}
+            </div>
         </div>
     )
 }
