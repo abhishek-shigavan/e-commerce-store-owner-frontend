@@ -1,4 +1,4 @@
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import penIcon from "../../assets/pen_icon.svg"
 import upArrowIcon from "../../assets/up_arrow.svg"
 import downArrowIcon from "../../assets/down_arrow.svg"
@@ -17,12 +17,15 @@ import "./ProductDetailsRow.scss"
 
 function ProductDetailsRow ({id, index, productDetails, listOfProducts, updateListOfProducts, ...props}) {
     const [openProdPicker, setOpenProdPicker] = useState(false)
-    const [discountAdded, setDiscountAdded] = useState(productDetails?.discount?.value.length ? true : false)
+    const [discountAdded, setDiscountAdded] = useState(productDetails?.discount?.value.length || productDetails?.discount?.type.length ? true : false)
     const [hideVariants, setHideVariants] = useState(true)
-    const [listOfVariants, setListOfVariants] = useState(productDetails?.variants || [])
+    const [listOfVariants, setListOfVariants] = useState([])
+
+    useEffect(() => {
+        setListOfVariants(productDetails.variants)        
+    }, [productDetails])
 
     const { attributes, listeners, setNodeRef, transform, transition } = useSortable({ id });
-
     const style = {
         transition,
         transform: CSS.Transform.toString(transform),
@@ -163,70 +166,11 @@ function ProductDetailsRow ({id, index, productDetails, listOfProducts, updateLi
                     }
                 </div>
             </div>
-            {/* {productDetails.variants.length > 0 && 
-                <div className="product-list-variant-cnt">
-                    {hideVariants ? 
-                        <div
-                            className="product-list-variant-btn-img-cnt"
-                            onClick={() => setHideVariants(!hideVariants)}
-                        >
-                            <span>Show Variants</span>
-                            <img src={downArrowIcon} alt="" />
-                        </div>
-                        : <>
-                            <div 
-                                className="product-list-variant-btn-img-cnt"
-                                onClick={() => setHideVariants(!hideVariants)}
-                            >
-                                <span>Hide Variants</span>
-                                <img src={upArrowIcon} alt="" />
-                            </div>
-                            {productDetails.variants.map((variantItem) =>
-                                <div className="product-list-variant-details-cnt">
-                                    <div {...attributes} {...listeners}><img src={bulletIcon} alt="Bullet icon" /></div>
-                                    <div {...attributes} {...listeners} style={discountAdded ? {width: "calc(50% - 22px)"} : {width: "calc(91% - 22px)"}}>
-                                        <span>{variantItem.title}</span>
-                                    </div>
-                                    {discountAdded && <div>
-                                        <input
-                                            type="text"
-                                            value={variantItem.discount.value}
-                                            onChange={(e) => handleDiscount(e.currentTarget.value, "variantDiscount", variantItem)}
-                                        />
-                                        <FormControl sx={{width: "48%", height: "32px", backgroundColor: "white", borderRadius: "30px"}}>
-                                            <Select
-                                                labelId="demo-simple-select-autowidth-label"
-                                                id="demo-simple-select-autowidth"
-                                                sx={{height: "32px", borderRadius: "30px"}}
-                                                value={variantItem.discount.type}
-                                                className="xyz"
-                                                fullWidth
-                                                onChange={(e) => handleDiscount(e.target.value, "variantDiscountType", variantItem)}
-                                            >
-                                                <MenuItem value="% Off">% off</MenuItem>
-                                                <MenuItem value="Flat">flat</MenuItem>
-                                            </Select>
-                                        </FormControl>
-                                        <img 
-                                            src={closeIcon}
-                                            alt="Close icon"
-                                            onClick={() => handleRemoveProductOrVariant(productDetails, variantItem)}
-                                        />
-                                    </div>}
-                                </div>
-                            )}
-                            <div className="product-list-variants-divider"></div>
-                        </>
-                    }        
-                </div>
-            } */}
-
-
             {productDetails.variants.length > 0 && 
-                <div className="product-list-variant-cnt">
+                <div className="product-details-variant-cnt">
                     {hideVariants ? 
                         <div
-                            className="product-list-variant-btn-img-cnt"
+                            className="product-details-variant-btn-img-cnt"
                             onClick={() => setHideVariants(!hideVariants)}
                         >
                             <span>Show Variants</span>
@@ -234,13 +178,13 @@ function ProductDetailsRow ({id, index, productDetails, listOfProducts, updateLi
                         </div>
                         : <>
                             <div 
-                                className="product-list-variant-btn-img-cnt"
+                                className="product-details-variant-btn-img-cnt"
                                 onClick={() => setHideVariants(!hideVariants)}
                             >
                                 <span>Hide Variants</span>
                                 <img src={upArrowIcon} alt="" />
                             </div>
-                            <div style={{width: "100%", display: "flex", flexDirection:"column", gap: "15px"}}>
+                            <div className="product-details-variants-list-items-cnt">
                                 <DndContext
                                     collisionDetection={closestCorners}
                                     onDragEnd={handleDragEnd}
@@ -252,7 +196,7 @@ function ProductDetailsRow ({id, index, productDetails, listOfProducts, updateLi
                                     </SortableContext>
                                 </DndContext>
                             </div>
-                            <div className="product-list-variants-divider"></div>
+                            <div className="product-details-variants-divider"></div>
                         </>
                     }        
                 </div>
