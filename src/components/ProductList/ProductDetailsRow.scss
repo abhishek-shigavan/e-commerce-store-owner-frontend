@@ -87,14 +87,14 @@
         }
     }
 }
-.product-list-variant-cnt {
+.product-details-variant-cnt {
     width: 100%;
     display: flex;
     flex-direction: column;
     align-items: flex-end;
 
 }
-.product-list-variant-btn-img-cnt {
+.product-details-variant-btn-img-cnt {
     padding: 8px 0px;
     span {
         font-family: SF Pro Text;
@@ -114,7 +114,14 @@
         cursor: pointer;
     }
 }
-.product-list-variants-divider {
+.product-details-variants-list-items-cnt {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 10px;
+}
+.product-details-variants-divider {
     width: 93%;
     border-bottom: 1px solid #0000001A;
 }
