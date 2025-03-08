@@ -25,21 +25,6 @@
         min-width: 151px;
         display: flex;
         justify-content: space-between;
-
-        input {
-            width: calc(39% - 20px);
-            height: 32px;
-            padding: 0px 10px;
-            background: #FFFFFF;
-            border: 1px solid #0000001A;
-            box-shadow: 0px 2px 4px 0px #0000001A;
-            &:focus {
-                border: 1px solid #008060;
-            }
-            &:focus-visible {
-                outline: none !important
-            }
-        }
     }
 }
 .products-details-data-row {
@@ -84,6 +69,26 @@
         margin-right: 10px;
         &:hover {
             cursor: pointer;
+        }
+    }
+}
+.product-details-discount-cnt {
+    width: 88%;
+    display: flex;
+    justify-content: space-between;
+
+    input {
+        width: calc(42% - 20px);
+        height: 32px;
+        padding: 0px 10px;
+        background: #FFFFFF;
+        border: 1px solid #0000001A;
+        box-shadow: 0px 2px 4px 0px #0000001A;
+        &:focus {
+            border: 1px solid #008060;
+        }
+        &:focus-visible {
+            outline: none !important
         }
     }
 }
