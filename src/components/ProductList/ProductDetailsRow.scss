@@ -58,12 +58,16 @@
     box-shadow: 0px 2px 4px 0px #0000001A;
 
     >span {
+        width: 80%;
         font-family: SF Pro Text;
         font-weight: 400;
         font-size: 14px;
         line-height: 21px;
         letter-spacing: 0px;
         padding-left: 10px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
     }
     img {
         margin-right: 10px;
