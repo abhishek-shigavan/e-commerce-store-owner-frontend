@@ -2,7 +2,7 @@ import "./ProductPicker.scss"
 import closeIcon from "../../assets/close_icon.svg"
 import searchIcon from "../../assets/search_icon.svg"
 import { searchProductsApiCall } from "../../utils/Api"
-import { useEffect, useState } from "react"
+import { useEffect, useRef, useState } from "react"
 import { CircularProgress } from "@mui/material"
 
 function ProductPicker ({updateProductList, ...props}) {
@@ -11,12 +11,13 @@ function ProductPicker ({updateProductList, ...props}) {
     const [searchProdList, setSearchProdList] = useState([])
     const [selectedProdList, setSelectedProdList] = useState([])
     const [loading, setLoading] = useState(true)
+    const listContainerRef = useRef(null)
 
     useEffect(() => {
         fetchProducts("")
     }, [])
    
-    const delayedAPICall = (cb, delay = 1000) => {
+    const searchAPIHandler = (cb, delay = 1000) => {
         let timeout
         return (...args) => {
             clearTimeout(timeout)
@@ -37,7 +38,7 @@ function ProductPicker ({updateProductList, ...props}) {
         })
     }
 
-    const handleSearchProduct = delayedAPICall((query) => {
+    const handleSearchProduct = searchAPIHandler((query) => {
         setLoading(true)
         if(!query.length) {
             setSearchProdList([])
@@ -91,23 +92,38 @@ function ProductPicker ({updateProductList, ...props}) {
         updateProductList(selectedProdList)
     }
 
-    const handlefetchProductsOnScroll = delayedAPICall(async() => {
-        if(pageNo) {
-            setLoading(true)
-            try {
-                const res = await searchProductsApiCall(searchQuery, pageNo + 1)
-                if (res.data == null) {
-                    setPageNo(0)
+    const scrollAPIHandler = (func, delay = 700) => {
+        let timer = null
+        return (...args) => {
+            if (timer) return
+            timer = setTimeout(() => {
+                func(...args)
+                timer = null
+            }, delay)
+        }
+    }
+
+    const handlefetchProductsOnScroll = scrollAPIHandler(async() => {
+        const container = listContainerRef.current;
+        if (container) {
+        const { scrollTop, scrollHeight, clientHeight } = container;
+            if (scrollTop + clientHeight >= scrollHeight - 10) {
+                setLoading(true)
+                try {
+                    const res = await searchProductsApiCall(searchQuery, pageNo + 1)
+                    if (res.data == null) {
+                        setPageNo(0)
+                        setLoading(false)
+                        return
+                    }
                     setLoading(false)
-                    return
-                }
-                setLoading(false)
-                setSearchProdList([...searchProdList, ...res.data])
-                setPageNo(pageNo + 1)
-            }catch (err) {
-                setLoading(false)
+                    setSearchProdList([...searchProdList, ...res.data])
+                    setPageNo(pageNo + 1)
+                }catch (err) {
+                    setLoading(false)
+                }            
             }
-        }    
+        }  
     }, 700)
 
     return (
@@ -130,7 +146,8 @@ function ProductPicker ({updateProductList, ...props}) {
             </div>
             <div className="product-picker-search-divider-cnt"></div>
             <div className="product-search-list-action-cnt">
-                <div 
+                <div
+                    ref={listContainerRef}
                     className="product-search-list-cnt"
                     onScroll={handlefetchProductsOnScroll}
                 >
