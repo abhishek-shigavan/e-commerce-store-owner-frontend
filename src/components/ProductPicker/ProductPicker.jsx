@@ -161,7 +161,7 @@ function ProductPicker ({updateProductList, ...props}) {
                                         onChange={() => handleSelectProduct(prod)}
                                         checked={selectedProdList.filter((item) => item.id == prod.id).length}
                                     />
-                                    <img src={prod?.image?.src} alt="" />
+                                    <img src={prod?.image?.src} alt="" loading="lazy"/>
                                     <span>{prod?.title}</span>
                                 </div>
                                 {prod?.variants.map((prodVariant) =>
