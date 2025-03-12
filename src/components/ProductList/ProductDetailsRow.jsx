@@ -97,7 +97,7 @@ function ProductDetailsRow ({id, index, productDetails, listOfProducts, updateLi
             if(item.id == productDetails.id) {
                 return {...productDetails, variants: updatedVariantsList}
             }
-            return productDetails
+            return item
         })
         updateListOfProducts(updatedListOfProducts)
     }
