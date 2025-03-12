@@ -1,5 +1,5 @@
-import closeIcon from "../../assets/close_grey_icon.svg"
-import bulletIcon from "../../assets/bullet_icon.svg"
+import { useEffect, useState } from "react"
+import {closeIcon, bulletIcon} from "../../assets/IconnsConfig"
 import MenuItem from '@mui/material/MenuItem'
 import FormControl from '@mui/material/FormControl'
 import Select from '@mui/material/Select'
@@ -8,13 +8,23 @@ import { CSS } from "@dnd-kit/utilities"
 import "./ProductVariantRow.scss"
 
 function ProductVariantRow ({id, variantDetails, listOfVariants, updateListOfVariants, showDiscount = false, ...props}) {
-
+    const [discountVal, setDiscountVal] = useState(variantDetails.discount.value)
     const { attributes, listeners, setNodeRef, transform, transition } = useSortable({ id });
     const style = {
         transition,
         transform: CSS.Transform.toString(transform),
     }    
     
+    useEffect(() => {
+        setDiscountVal(variantDetails.discount.value)    
+    }, [variantDetails])
+
+    useEffect(() => {
+        if(variantDetails.discount.value !== discountVal) {
+            handleDiscount(discountVal, "discount")
+        }        
+    }, [discountVal])
+
     const handleDiscount = (val, action) => {
         let updatedVariantsList = listOfVariants.map(item => {
             if(item.id === variantDetails.id) {
@@ -46,10 +56,9 @@ function ProductVariantRow ({id, variantDetails, listOfVariants, updateListOfVar
             <div style={!showDiscount ? {width: "14px"} : {}}>
                 {showDiscount && <div className="product-variant-discount-cnt">
                     <input
-                        type="text"
-                        value={variantDetails.discount.value}
-                        onChange={(e) => handleDiscount(e.currentTarget.value, "discount")}
-                        />
+                        value={discountVal}
+                        onChange={(e) => setDiscountVal(e.currentTarget.value)}
+                    />
                     <FormControl sx={{width: "48%", height: "32px", backgroundColor: "white", borderRadius: "30px"}}>
                         <Select
                             labelId="demo-simple-select-autowidth-label"
