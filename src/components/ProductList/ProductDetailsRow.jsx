@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react"
-import {penIcon, upArrowIcon, downArrowIcon, closeIcon, bulletIcon } from "../../assets/IconnsConfig"
+import {penIcon, upArrowIcon, downArrowIcon, closeGreyIcon, bulletIcon } from "../../assets/IconnsConfig"
 import MenuItem from '@mui/material/MenuItem'
 import FormControl from '@mui/material/FormControl'
 import Select from '@mui/material/Select'
@@ -145,7 +145,7 @@ function ProductDetailsRow ({id, index, productDetails, listOfProducts, updateLi
                                         onChange={(e) => handleProductDiscountChange(e)}
                                         // value={productDetails?.discount?.value}    
                                     />
-                                    <FormControl sx={{width: "48%", height: "32px", backgroundColor: "white"}}>
+                                    <FormControl sx={{width: "53%", height: "32px", backgroundColor: "white"}}>
                                         <Select
                                             labelId="demo-simple-select-autowidth-label"
                                             id="demo-simple-select-autowidth"
@@ -160,7 +160,7 @@ function ProductDetailsRow ({id, index, productDetails, listOfProducts, updateLi
                                     </FormControl>
                                 </div>
                                 <img
-                                    src={closeIcon}
+                                    src={closeGreyIcon}
                                     alt="Close icon"
                                     onClick={handleRemoveProduct}
                                 />

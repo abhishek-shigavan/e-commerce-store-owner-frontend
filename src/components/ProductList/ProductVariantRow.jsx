@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react"
-import {closeIcon, bulletIcon} from "../../assets/IconnsConfig"
+import {closeGreyIcon, bulletIcon} from "../../assets/IconnsConfig"
 import MenuItem from '@mui/material/MenuItem'
 import FormControl from '@mui/material/FormControl'
 import Select from '@mui/material/Select'
@@ -59,7 +59,7 @@ function ProductVariantRow ({id, variantDetails, listOfVariants, updateListOfVar
                         value={discountVal}
                         onChange={(e) => setDiscountVal(e.currentTarget.value)}
                     />
-                    <FormControl sx={{width: "48%", height: "32px", backgroundColor: "white", borderRadius: "30px"}}>
+                    <FormControl sx={{width: "53%", height: "32px", backgroundColor: "white", borderRadius: "30px"}}>
                         <Select
                             labelId="demo-simple-select-autowidth-label"
                             id="demo-simple-select-autowidth"
@@ -75,7 +75,7 @@ function ProductVariantRow ({id, variantDetails, listOfVariants, updateListOfVar
                     </FormControl>
                 </div>}
                 <img 
-                    src={closeIcon}
+                    src={closeGreyIcon}
                     alt="Close icon"
                     onClick={handleRemoveVariant}
                 />
