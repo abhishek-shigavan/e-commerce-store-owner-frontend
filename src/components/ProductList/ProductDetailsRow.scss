@@ -29,6 +29,12 @@
         min-width: 151px;
         display: flex;
         justify-content: space-between;
+
+        >img {
+            &:hover {
+                cursor: pointer;
+            }
+        }
     }
 }
 .products-details-data-row {
