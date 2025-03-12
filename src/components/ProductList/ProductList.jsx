@@ -1,9 +1,9 @@
 import { useState } from "react"
-import "./ProductList.scss"
-import logo from "../../assets/monklogo.svg"
+import { logo } from "../../assets/IconnsConfig"
 import ProductDetailsRow from "./ProductDetailsRow"
 import { closestCorners, DndContext } from "@dnd-kit/core"
 import { arrayMove, SortableContext, verticalListSortingStrategy } from "@dnd-kit/sortable"
+import "./ProductList.scss"
 
 function ProductList () {
     const [listOfProducts, setListOfProducts] = useState([{
