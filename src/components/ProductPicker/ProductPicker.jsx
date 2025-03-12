@@ -1,9 +1,8 @@
-import "./ProductPicker.scss"
-import closeIcon from "../../assets/close_icon.svg"
-import searchIcon from "../../assets/search_icon.svg"
+import { closeIcon, searchIcon } from "../../assets/IconnsConfig"
 import { searchProductsApiCall } from "../../utils/Api"
 import { useEffect, useRef, useState } from "react"
 import { CircularProgress } from "@mui/material"
+import "./ProductPicker.scss"
 
 function ProductPicker ({updateProductList, ...props}) {
     const [pageNo, setPageNo] = useState(1)
@@ -154,7 +153,7 @@ function ProductPicker ({updateProductList, ...props}) {
                     {(loading && searchProdList.length === 0) ? <div className="product-picker-loading-cnt"><CircularProgress /></div>
                         : !searchProdList.length ? <div className="product-picker-loading-cnt"><span>No products found</span></div>
                         : searchProdList.map((prod) =>
-                            <>
+                            <div key={prod.id}>
                                 <div className="product-picker-product-cnt">
                                     <input 
                                         type="checkbox"
@@ -165,7 +164,7 @@ function ProductPicker ({updateProductList, ...props}) {
                                     <span>{prod?.title}</span>
                                 </div>
                                 {prod?.variants.map((prodVariant) =>
-                                    <div className="product-picker-product-variant-cnt">
+                                    <div key={prodVariant.id} className="product-picker-product-variant-cnt">
                                         <div>
                                             <input
                                                 type="checkbox"
@@ -180,7 +179,7 @@ function ProductPicker ({updateProductList, ...props}) {
                                         </div>
                                     </div>
                                 )}
-                            </>
+                            </div>
                     )}
                     {(loading && searchProdList.length > 0)  && <div className="product-picker-loading-cnt"><CircularProgress /></div>}
                 </div>
