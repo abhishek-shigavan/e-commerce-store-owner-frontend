@@ -1,9 +1,5 @@
 import { useEffect, useState } from "react"
-import penIcon from "../../assets/pen_icon.svg"
-import upArrowIcon from "../../assets/up_arrow.svg"
-import downArrowIcon from "../../assets/down_arrow.svg"
-import closeIcon from "../../assets/close_grey_icon.svg"
-import bulletIcon from "../../assets/bullet_icon.svg"
+import {penIcon, upArrowIcon, downArrowIcon, closeIcon, bulletIcon } from "../../assets/IconnsConfig"
 import MenuItem from '@mui/material/MenuItem'
 import FormControl from '@mui/material/FormControl'
 import Select from '@mui/material/Select'
