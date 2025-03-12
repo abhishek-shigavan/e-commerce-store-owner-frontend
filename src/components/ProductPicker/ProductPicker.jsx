@@ -39,11 +39,6 @@ function ProductPicker ({updateProductList, ...props}) {
 
     const handleSearchProduct = searchAPIHandler((query) => {
         setLoading(true)
-        if(!query.length) {
-            setSearchProdList([])
-            setLoading(false)
-            return
-        }
         setSearchQuery(query)
         if(pageNo > 1) setPageNo(1)
         fetchProducts(query)
@@ -105,8 +100,9 @@ function ProductPicker ({updateProductList, ...props}) {
     const handlefetchProductsOnScroll = scrollAPIHandler(async() => {
         const container = listContainerRef.current;
         if (container) {
-        const { scrollTop, scrollHeight, clientHeight } = container;
-            if (scrollTop + clientHeight >= scrollHeight - 10) {
+            const { scrollTop, scrollHeight, clientHeight } = container;
+            
+            if (scrollTop + clientHeight >= scrollHeight - 10 && pageNo) {
                 setLoading(true)
                 try {
                     const res = await searchProductsApiCall(searchQuery, pageNo + 1)
