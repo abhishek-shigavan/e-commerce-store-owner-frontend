@@ -49,25 +49,30 @@ function ProductPicker ({updateProductList, ...props}) {
     }
 
     const handleSelectProduct = (product) => {
-        const isProductPresent = selectedProdList.filter((item) => item.id == product.id)
+        const isProductPresent = selectedProdList.filter((item) => item.id === product.id)
 
-        isProductPresent.length ? setSelectedProdList(selectedProdList.filter((item) => item.id != product.id))
+        isProductPresent.length ? setSelectedProdList(selectedProdList.filter((item) => item.id !== product.id))
             : setSelectedProdList([...selectedProdList, {pid: `prod${Math.random().toPrecision(4)*10000}`, id: product.id, product: product.title, discount: {value: "", type: ""}, variants: getVariantsWithDiscount(product.variants)}])
     }
 
     const handleSelectVariant = (product, variant) => {
-        const isProductPresent = selectedProdList.filter((item) => item.id == product.id)
+        const isProductPresent = selectedProdList.filter((item) => item.id === product.id)
 
         if(!isProductPresent.length) {
             setSelectedProdList([...selectedProdList, {pid: `prod${Math.random().toPrecision(4)*10000}`, id: product.id, product: product.title, discount: { value: "", type: ""}, variants: [{...variant, discount: {value: "", type: ""}}]}])
         } else {
-            const isVariantPresent = isProductPresent[0].variants.filter((item) => item.id == variant.id)
+            const isVariantPresent = isProductPresent[0].variants.filter((item) => item.id === variant.id)
 
-            isVariantPresent.length ? isProductPresent[0].variants = isProductPresent[0].variants.filter((item) => item.id != variant.id)
+            if(isVariantPresent.length && isProductPresent[0].variants.length === 1) {
+                setSelectedProdList(selectedProdList.filter(item => item.id !== isProductPresent[0].id))
+                return
+            }
+            
+            isVariantPresent.length ? isProductPresent[0].variants = isProductPresent[0].variants.filter((item) => item.id !== variant.id)
                 : isProductPresent[0].variants = [...isProductPresent[0].variants, {...variant, discount: {value: "", type: ""}}]
 
-            setSelectedProdList(selectedProdList.map((item) => {
-                if(item.id == isProductPresent[0].id)
+                setSelectedProdList(selectedProdList.map((item) => {
+                if(item.id === isProductPresent[0].id)
                     return isProductPresent[0]
                 return item
             }))    
@@ -76,9 +81,9 @@ function ProductPicker ({updateProductList, ...props}) {
 
     const handleMarkUnmarkVariants = (product, variantId) => {
         let flag = false
-        const isProductSelected = selectedProdList.filter((item) => item.id == product.id)
+        const isProductSelected = selectedProdList.filter((item) => item.id === product.id)
 
-        !isProductSelected.length ? flag = false : isProductSelected[0].variants.filter((item) => item.id == variantId).length > 0 ? flag = true : flag = false
+        !isProductSelected.length ? flag = false : isProductSelected[0].variants.filter((item) => item.id === variantId).length > 0 ? flag = true : flag = false
         return flag
     }
 
@@ -154,7 +159,7 @@ function ProductPicker ({updateProductList, ...props}) {
                                     <input 
                                         type="checkbox"
                                         onChange={() => handleSelectProduct(prod)}
-                                        checked={selectedProdList.filter((item) => item.id == prod.id).length}
+                                        checked={selectedProdList.filter((item) => item.id === prod.id).length}
                                     />
                                     <img src={prod?.image?.src} alt="" loading="lazy"/>
                                     <span>{prod?.title}</span>
