@@ -61,7 +61,7 @@ function ProductDetailsRow ({id, index, productDetails, listOfProducts, updateLi
         }
 
         const updatedListOfProducts = listOfProducts.map(item => {
-            if(item.id == productDetails.id) {
+            if(item.id === productDetails.id) {
                 return {
                     ...item,
                     discount: action === "discount" ? {...productDetails.discount, value: val} : {...productDetails.discount, type: val},
@@ -76,7 +76,7 @@ function ProductDetailsRow ({id, index, productDetails, listOfProducts, updateLi
     const updateProductList = (selectedProduct = []) => {
         if(selectedProduct.length) {
             updateListOfProducts(listOfProducts.flatMap(item => {
-                if(item.pid == openProdPicker) 
+                if(item.pid === openProdPicker) 
                     return selectedProduct
                 return item
             }))
@@ -89,12 +89,17 @@ function ProductDetailsRow ({id, index, productDetails, listOfProducts, updateLi
     }
 
     const handleListOfVariantsUpdate = (updatedVariantsList) => {
-        const updatedListOfProducts = listOfProducts.map((item) => {
-            if(item.id == productDetails.id) {
-                return {...productDetails, variants: updatedVariantsList}
-            }
-            return item
-        })
+        let updatedListOfProducts = []
+        if(updatedVariantsList.length) {
+            updatedListOfProducts = listOfProducts.map((item) => {
+                if(item.id === productDetails.id) {
+                    return {...productDetails, variants: updatedVariantsList}
+                }
+                return item
+            })
+        } else {
+            updatedListOfProducts = listOfProducts.filter(item => item.id !== productDetails.id)
+        }
         updateListOfProducts(updatedListOfProducts)
     }
 
