@@ -4,11 +4,11 @@ import { useEffect, useRef, useState } from "react"
 import { CircularProgress } from "@mui/material"
 import "./ProductPicker.scss"
 
-function ProductPicker ({updateProductList, ...props}) {
+function ProductPicker ({updateProductList, existingProducts, ...props}) {
     const [pageNo, setPageNo] = useState(1)
     const [searchQuery, setSearchQuery] = useState("")
     const [searchProdList, setSearchProdList] = useState([])
-    const [selectedProdList, setSelectedProdList] = useState([])
+    const [selectedProdList, setSelectedProdList] = useState(existingProducts.filter(item => item?.id))
     const [loading, setLoading] = useState(true)
     const listContainerRef = useRef(null)
 
