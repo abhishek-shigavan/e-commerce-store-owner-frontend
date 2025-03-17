@@ -74,6 +74,11 @@ function ProductDetailsRow ({id, index, productDetails, listOfProducts, updateLi
     }
 
     const updateProductList = (selectedProduct = []) => {
+        const idsOfExistingProducts = new Set(listOfProducts.map(item => item.id))
+
+        //removing existing products form selected list
+        selectedProduct = selectedProduct.filter(item => !idsOfExistingProducts.has(item.id))
+
         if(selectedProduct.length) {
             updateListOfProducts(listOfProducts.flatMap(item => {
                 if(item.pid === openProdPicker) 
@@ -215,7 +220,7 @@ function ProductDetailsRow ({id, index, productDetails, listOfProducts, updateLi
                 aria-describedby="modal-modal-description"
                 sx={{width: "100%", height: "100vh", display: "flex", alignItems: "center"}}
             >
-                <ProductPicker updateProductList={updateProductList}/>
+                <ProductPicker updateProductList={updateProductList} existingProducts={listOfProducts} />
             </Modal>
         </div>
     )
