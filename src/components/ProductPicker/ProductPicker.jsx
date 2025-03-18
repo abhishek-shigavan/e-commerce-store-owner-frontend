@@ -133,7 +133,7 @@ function ProductPicker ({updateProductList, existingProducts, ...props}) {
                 <img
                     src={closeIcon}
                     alt="Close icon" 
-                    onClick={updateProductList}
+                    onClick={() => updateProductList()}
                 />
             </div>
             <div className="product-picker-search-cnt">
