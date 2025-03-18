@@ -73,18 +73,31 @@ function ProductDetailsRow ({id, index, productDetails, listOfProducts, updateLi
         updateListOfProducts(updatedListOfProducts)
     }
 
-    const updateProductList = (selectedProduct = []) => {
+    const updateProductList = (selectedProducts = []) => {
+        let existingProducts = listOfProducts
         const idsOfExistingProducts = new Set(listOfProducts.map(item => item.id))
-        
-        //removing existing products other than current selected product form selected list  
-        selectedProduct = selectedProduct.filter(item => !idsOfExistingProducts.has(item.id) || item.pid === openProdPicker)
+        const idsOfSelectedProduct = new Set(selectedProducts.map(item => item.pid))
 
-        if(selectedProduct.length) {
-            updateListOfProducts(listOfProducts.flatMap(item => {
+        //filtering existing products list as per new selected products list
+        existingProducts = listOfProducts.filter(item => {
+            if(!item.id) {
+                return item
+            } else if (idsOfSelectedProduct.has(item.pid)) {
+                return item
+            }
+        })
+
+        //removing existing products other than newly added & edit product form selected list  
+        selectedProducts = selectedProducts.filter(item => !idsOfExistingProducts.has(item.id) || item.pid === openProdPicker)
+        
+        if(selectedProducts.length) {
+            updateListOfProducts(existingProducts.flatMap(item => {
                 if(item.pid === openProdPicker) 
-                    return selectedProduct
+                    return selectedProducts
                 return [item]
             }))
+        } else {
+            updateListOfProducts(existingProducts)
         }
         setOpenProdPicker("")
     }
