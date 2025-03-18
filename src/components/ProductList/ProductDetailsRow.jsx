@@ -233,7 +233,7 @@ function ProductDetailsRow ({id, index, productDetails, listOfProducts, updateLi
                 aria-describedby="modal-modal-description"
                 sx={{width: "100%", height: "100vh", display: "flex", alignItems: "center"}}
             >
-                <ProductPicker updateProductList={updateProductList} existingProducts={listOfProducts} />
+                <ProductPicker updateProductList={updateProductList} existingProducts={listOfProducts} closePicker={setOpenProdPicker} />
             </Modal>
         </div>
     )

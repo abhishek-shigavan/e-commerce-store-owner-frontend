@@ -4,7 +4,7 @@ import { useEffect, useRef, useState } from "react"
 import { CircularProgress } from "@mui/material"
 import "./ProductPicker.scss"
 
-function ProductPicker ({updateProductList, existingProducts, ...props}) {
+function ProductPicker ({updateProductList, existingProducts, closePicker, ...props}) {
     const [pageNo, setPageNo] = useState(1)
     const [searchQuery, setSearchQuery] = useState("")
     const [searchProdList, setSearchProdList] = useState([])
@@ -133,7 +133,7 @@ function ProductPicker ({updateProductList, existingProducts, ...props}) {
                 <img
                     src={closeIcon}
                     alt="Close icon" 
-                    onClick={() => updateProductList()}
+                    onClick={() => closePicker("")}
                 />
             </div>
             <div className="product-picker-search-cnt">
