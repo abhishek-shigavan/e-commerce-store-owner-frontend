@@ -18,8 +18,8 @@ function ProductDetailsRow ({id, index, productDetails, listOfProducts, updateLi
     const [listOfVariants, setListOfVariants] = useState([])
 
     useEffect(() => {
-        setListOfVariants(productDetails.variants)        
-    }, [productDetails])
+        setListOfVariants(productDetails.variants)
+    }, [productDetails, productDetails.variants])
 
     const { attributes, listeners, setNodeRef, transform, transition } = useSortable({ id });
     const style = {
@@ -75,15 +75,15 @@ function ProductDetailsRow ({id, index, productDetails, listOfProducts, updateLi
 
     const updateProductList = (selectedProduct = []) => {
         const idsOfExistingProducts = new Set(listOfProducts.map(item => item.id))
-
-        //removing existing products form selected list
-        selectedProduct = selectedProduct.filter(item => !idsOfExistingProducts.has(item.id))
+        
+        //removing existing products other than current selected product form selected list  
+        selectedProduct = selectedProduct.filter(item => !idsOfExistingProducts.has(item.id) || item.pid === openProdPicker)
 
         if(selectedProduct.length) {
             updateListOfProducts(listOfProducts.flatMap(item => {
                 if(item.pid === openProdPicker) 
                     return selectedProduct
-                return item
+                return [item]
             }))
         }
         setOpenProdPicker("")
